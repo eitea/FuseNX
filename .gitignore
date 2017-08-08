@@ -1,3 +1,4 @@
+.gitignore
 go-bindata-assetfs.go
 debug
 restic.exe
