@@ -1,5 +1,6 @@
 package main
 
+//initial can set one persistent Repository which has to be initialized before
 var initial = Repo{
 	Name:         "Backup",
 	Type:         "s3",
