@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Edit Backup Job</title>
+    {{template "imports"}}
+</head>
+
+<body>
+    {{template "navbar" .}}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="page-header">Edit Backup Job</h1>
+                <form action="/editbackupjob" class="form-horizontal" autocomplete="off">
+                    <input type="hidden" name="jobid" value="{{.CurrentBackupJob.ID}}">
+                    <div class="form-group">
+                        <label for="repoid" class="control-label col-sm-2">Repository</label>
+                        <div class="col-sm-10">
+                            <select id="repoid" name="repoid" class="form-control">
+                                {{$repoid:=.CurrentBackupJob.RepoID}}
+                                {{range .Config.Repos}}
+                                <option value="{{.ID}}" {{if eq $repoid .ID}}selected{{end}}>{{.Name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="control-label col-sm-2">Name</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" id="name" name="name" value="{{.CurrentBackupJob.Name}}" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailerror" class="control-label col-sm-2">Email</label>
+                        <div class="col-sm-10">
+                            <select id="mail" name="mail" class="form-control">
+                                    <option value="always" {{if and .CurrentBackupJob.MailError .CurrentBackupJob.MailSuccess}}selected{{end}} >Always send emails</option>
+                                    <option value="error" {{if and .CurrentBackupJob.MailError (not .CurrentBackupJob.MailSuccess)}}selected{{end}} >Send email in case of an error</option>
+                                    <option value="never" {{if and (not .CurrentBackupJob.MailError) (not .CurrentBackupJob.MailSuccess)}}selected{{end}} >Never send emails</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="schedule" class="control-label col-sm-2">Schedule Backup</label>
+                        <div class="col-sm-10">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="schedule" id="schedule" {{if .CurrentBackupJob.Scheduled }}checked{{end}}></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="repeat">
+                        <label for="repeat" class="control-label col-sm-2">Repeat</label>
+                        <div class="col-sm-10">
+                            <div class="input-group col-sm-12">
+                                <input placeholder="Hours" title="Hours" type="number" name="hours" required value="{{hours .CurrentBackupJob.Repeat}}" class="form-control"
+                                    style="width:33.3333%">
+                                <input placeholder="Minutes" title="Minutes" type="number" name="minutes" required value="{{minutes .CurrentBackupJob.Repeat}}"
+                                    class="form-control" style="width:33.3333%">
+                                <input placeholder="Seconds" title="Seconds" type="number" name="seconds" required value="{{seconds .CurrentBackupJob.Repeat}}"
+                                    class="form-control" style="width:33.3333%">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="start">
+                        <label for="start" class="control-label col-sm-2">Start</label>
+                        <div class="col-sm-10">
+                            <input title="If you don't see a date picker, change your browser" class="form-control" type="datetime-local" name="start"
+                                value="{{formattime .CurrentBackupJob.Start}}" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="files">Files and Folders</label>
+                        <div class="files col-sm-10">
+                            {{range $key,$val := .CurrentBackupJob.Files}}
+                            <div class="file input-group">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" type="submit" value="Save and browse Files" name="edit">Browse</button><br><br>
+                                </span>
+                                <input class="form-control" name="files" type="text" placeholder="C:\" value="{{.}}" title="(Not required) Manually enter files">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default {{if eq $key 0}}btn-add{{else}}btn-remove{{end}}" type="button"> <span class="glyphicon glyphicon-plus"></span></button>
+                                </span>
+                            </div>
+                            {{end}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-primary" type="submit" value="Save" name="edit" title="Edit"><span class="glyphicon glyphicon-ok"></button>
+                                <a class="btn btn-default" href="/backupjob" title="Cancel"><span class="glyphicon glyphicon-remove"></a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(".btn-add").click(function (e) {
+            e.preventDefault()
+            var clone = $(this).parents(".file").clone(true).appendTo(".files")
+            clone.find(".form-control").val("")
+            var btn = clone.find(".btn-add")
+            btn.removeClass("btn-add").unbind("click").addClass("btn-remove").click(function (e) {
+                e.preventDefault()
+                var parent = $(this).closest(".file")
+                parent.css("background-color", "red")
+                $(this).parents(".file").remove()
+            }).find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus")
+        })
+        $(".btn-remove").click(function (e) {
+            e.preventDefault()
+            var parent = $(this).closest(".file")
+            parent.css("background-color", "red")
+            $(this).parents(".file").remove()
+        }).find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus")
+        //{{if not .CurrentBackupJob.Scheduled}}
+        $("#start").hide()
+        $("#repeat").hide()
+        //{{end}}
+        $("#schedule").change(function () {
+            if (this.checked) {
+                $("#start").show()
+                $("#repeat").show()
+            } else {
+                $("#start").hide()
+                $("#repeat").hide()
+            }
+        })
+    </script>
+</body>
+
+</html>

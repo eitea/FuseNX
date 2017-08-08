@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Backup Aufgaben</title>
+    {{template "imports"}}
+</head>
+
+<body>
+    {{template "navbar" .}}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="page-header">Backup Aufgaben</h1>
+                <a class="btn btn-primary" href="/newbackupjob" title="Neue Backup Aufgabe erstellen">Neue Backup Aufgabe</a><br><br> {{if .Config.BackupJobs}}
+                <table class="table table-hover table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Aufgabenname</th>
+                            <th>Start</th>
+                            <th>Wiederholung</th>
+                            <th>Geplant</th>
+                            <th>Archiv</th>
+                            <th>Dateien</th>
+                            <th>Aktionen</th>
+                        </tr>
+                    </thead>
+                    {{range .Config.BackupJobs}}
+                    <tr class="{{if .LatestRunSuccessful}}success{{else}}danger{{end}}" title="{{if .LatestRunSuccessful}}Latest automatic Backup Successful{{else}}Latest automatic Backup not successful or Backup Job not started yet{{end}}">
+                        <td>{{.Name}}</td>
+                        <td>{{formattime .Start}}</td>
+                        <td>{{.Repeat}}</td>
+                        <td>{{if .Scheduled}}Ja{{else}}Nein{{end}}</td>
+                        <td>{{reponame .RepoID}}</td>
+                        <td>
+                            <ul class="list-group">
+                                {{range .Files}}
+                                <li class="list-group-item">{{.}}</li>
+                                {{end}}
+                            </ul>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-primary" href="/backup?jobid={{.ID}}">Sofort Ausführen</a>
+                                <a class="btn btn-default" href="/log?jobid={{.ID}}" title="Log anzeigen"><span class="glyphicon glyphicon-list"></span></a>
+                                <a class="btn btn-default" href="/editbackupjob?jobid={{.ID}}" title="Bearbeiten"><span class="glyphicon glyphicon-pencil"></span></a>
+                                <a class="btn btn-default" href="/deletebackupjob?jobid={{.ID}}" title="Löschen"><span class="glyphicon glyphicon-trash"></span></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {{end}}
+                </table>
+                {{end}}
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Backup Jobs</title>
+    {{template "imports"}}
+</head>
+
+<body>
+    {{template "navbar" .}}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="page-header">Backup Jobs</h1>
+                <a class="btn btn-primary" href="/newbackupjob" title="Create a new Backup Job">New Backup Job</a><br><br> {{if .Config.BackupJobs}}
+                <table class="table table-hover table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Job Name</th>
+                            <th>Start</th>
+                            <th>Repeat</th>
+                            <th>Scheduled</th>
+                            <th>Repository Name</th>
+                            <th>Files and Folders</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    {{range .Config.BackupJobs}}
+                    <tr class="{{if .LatestRunSuccessful}}success{{else}}danger{{end}}" title="{{if .LatestRunSuccessful}}Latest Backup Successful{{else}}Latest Backup not successful or Backup Job not started yet{{end}}">
+                        <td>{{.Name}}</td>
+                        <td>{{formattime .Start}}</td>
+                        <td>{{.Repeat}}</td>
+                        <td>{{if .Scheduled}}Yes{{else}}No{{end}}</td>
+                        <td>{{reponame .RepoID}}</td>
+                        <td>
+                            <ul class="list-group">
+                                {{range .Files}}
+                                <li class="list-group-item">{{.}}</li>
+                                {{end}}
+                            </ul>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-primary" href="/backup?jobid={{.ID}}" title="Start immediately">Run</a>
+                                <a class="btn btn-default" href="/log?jobid={{.ID}}" title="Show log"><span class="glyphicon glyphicon-list" ></span></a>
+                                <a class="btn btn-default" href="/editbackupjob?jobid={{.ID}}" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
+                                <a class="btn btn-default" href="/deletebackupjob?jobid={{.ID}}" title="Delete"><span class="glyphicon glyphicon-trash"></span></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {{end}}
+                </table>
+                {{end}}
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

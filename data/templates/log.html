@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Logs</title>
+    {{template "imports"}}
+</head>
+
+<body>
+    {{template "navbar" .}}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="page-header">Logs</h1>
+                <a class="btn btn-primary" href="/backupjob">Back</a><br><br> {{if .CurrentBackupJob.Logs}}
+                <table class="table table-hover table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Text</th>
+                            <th>Success</th>
+                        </tr>
+                    </thead>
+                    {{range .CurrentBackupJob.Logs}}
+                    <tr class="{{if .Success}}success{{else}}danger{{end}}" title="{{if .Success}}Successful{{else}}Not Successful{{end}}">
+                        <td>{{formattime .Time}}</td>
+                        <td>{{.Text}}</td>
+                        <td><span class="glyphicon {{if .Success}}glyphicon-ok{{else}}glyphicon-remove{{end}}"></span></td>
+                    </tr>
+                    {{end}}
+                </table>
+                {{else}}
+                <p>No Logs</p>
+                {{end}}
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

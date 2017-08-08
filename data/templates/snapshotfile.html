@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Files in Snapshot</title>
+    {{template "imports"}}
+</head>
+
+<body>
+    {{template "navbar" .}}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="page-header">Files in Snapshot</h1>
+                <a class="btn btn-primary" href="/snapshot?id={{.CurrentRepo.ID}}">Back</a><br><br>
+                <table class="table table-hover table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Path</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    {{$repoid := .CurrentRepo.ID}} {{$snapshotid := .CurrentSnapshotID}} {{range .SnapshotFiles}}
+                    <tr>
+                        <td>{{.}}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-primary" onclick="restore('{{$snapshotid}}','{{$repoid}}','{{.}}')">Restore</button>
+                            </div>
+                        </td>
+                    </tr>
+                    {{end}}
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        function restore(snapshotid, repoid, file) {
+            var target = prompt("Folder to restore to: ")
+            window.location.replace("/restorefile?target=" + target + "&snapshotid=" + snapshotid + "&repoid=" + repoid + "&file=" + file)
+        }
+    </script>
+</body>
+
+</html>

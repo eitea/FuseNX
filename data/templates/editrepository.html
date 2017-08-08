@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Edit Repository</title>
+    {{template "imports"}}
+</head>
+
+<body>
+    {{template "navbar" .}}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="page-header">Edit Repository</h1>
+                <form action="/editrepository" class="form-horizontal" autocomplete="off">
+                    <input type="hidden" name="repoid" value="{{.CurrentRepo.ID}}">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Type</label>
+                        <div class="col-sm-10">
+                            <select disabled class="form-control">
+                            <option>{{.CurrentRepo.Type}}</option>
+                        </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="control-label col-sm-2">Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" id="name" name="name" value="{{.CurrentRepo.Name}}" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Location</label>
+                        <div class="col-sm-10">
+                            <input type="text" value="{{.CurrentRepo.Location}}" disabled class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="control-label col-sm-2">Repository Password</label>
+                        <div class="col-sm-10">
+                            <input type="password" disabled value="notrealpwd" class="form-control">
+                        </div>
+                    </div>
+                    {{if .CurrentRepo.EnvVariables}}
+                    <div class="form-group">
+                        <label for="envvar" class="control-label col-sm-2">Environment Variables</label>
+                        <div class="col-sm-10">
+                            <input type="text" disabled value='{{join .CurrentRepo.EnvVariables ","}}' class="form-control">
+                        </div>
+                    </div>
+                    {{end}}
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-primary" type="submit" value="Edit" name="edit" title="Edit"><span class="glyphicon glyphicon-ok"></button>
+                                <a class="btn btn-default" href="/repository" title="Cancel"><span class="glyphicon glyphicon-remove"></span></a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

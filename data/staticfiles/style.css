@@ -1,0 +1,88 @@
+body {
+    padding-top: 55px;
+}
+
+
+/*Messages at the bottom of the page*/
+
+.sticky-alert {
+    pointer-events: none;
+    position: fixed;
+    z-index: 1001;
+    margin: auto;
+    width: 100%;
+    bottom: 0px;
+}
+
+.alert-transparent {
+    pointer-events: none;
+    background-color: rgba(50, 50, 50, 0.7);
+    border-color: black;
+    color: black;
+}
+
+.alert-transparent a {
+    pointer-events: initial;
+}
+
+.alert-message {
+    color: white;
+}
+
+.close {
+    color: white!important;
+}
+
+
+/*Button groups for actions in tables*/
+
+td:last-child {
+    width: 1%;
+    white-space: nowrap;
+}
+
+td:last-child .btn-group {
+    white-space: nowrap;
+    font-size: 0;
+}
+
+td:last-child .btn-group .btn {
+    display: inline-block;
+    font-size: 14px;
+    float: none;
+    clear: none;
+}
+
+
+/*Password screen*/
+
+.password {
+    max-width: 330px;
+}
+
+.password-body {
+    padding-top: 200px;
+}
+
+.eitea-pw-logo {
+    display: block;
+    max-width: 100%;
+    height: 100px;
+    margin: auto;
+}
+
+
+/*Navbar*/
+
+.eitea-logo {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 15px;
+}
+
+.eitea-logo img {
+    display: inline-block;
+    height: 40px;
+}
+
+.eitea-logo img:hover {}

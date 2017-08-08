@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Settings</title>
+    {{template "imports"}}
+</head>
+
+<body>
+    {{template "navbar" .}}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="page-header">Settings</h1>
+                <form action="/settings" class="form-horizontal" autocomplete="off">
+                    {{with .Config.Settings}}
+                    <div class="form-group">
+                        <label for="openbrowser" class="control-label col-sm-2">Version</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-static">{{$.Version}}  <a href="/versioncheck" class="btn btn-default">Check Version</a></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="language" class="control-label col-sm-2">Language</label>
+                        <div class="col-sm-10">
+                            <select name="language" class="form-control">
+                                <option value="english" {{if eq .Language `english`}}selected{{end}}>English</option>
+                                <option value="german" {{if eq .Language `german`}}selected{{end}}>German</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="openbrowser" class="control-label col-sm-2">Open Browser when FuseNX starts</label>
+                        <div class="col-sm-10">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="openbrowser" {{if .OpenBrowser}}checked{{end}} >Default Browser</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="autoreload" class="control-label col-sm-2">Automatic Page Reloading</label>
+                        <div class="col-sm-10">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="autoreload" {{if .AutomaticPageReload}}checked{{end}} >Reload Pages after 5 Minutes</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="autoscroll" class="control-label col-sm-2">Scrolling</label>
+                        <div class="col-sm-10">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="autoscroll" {{if .AutomaticScroll}}checked{{end}} >Keep Scrolling amount when changing pages (requires cookie)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="messages" class="control-label col-sm-2">Messages</label>
+                        <div class="col-sm-10">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="messages" {{if .ShowMessages}}checked{{end}} >Show Messages in GUI</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="tips" class="control-label col-sm-2">Tips</label>
+                        <div class="col-sm-10">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="tips" {{if .Tips}}checked{{end}} >Show Tips in GUI</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="control-label col-sm-2">Password</label>
+                        <div class="col-sm-10">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="password" >Reset Password</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">Mail</label>
+                        <div class="col-sm-10">
+                            <div class="checkbox">
+                                <label title="Only applies to automatic Backups"><input type="checkbox" name="sendmail" {{if .Mail.SendAfterBackupComplete}}checked{{end}} >Send an Email when Backup completes or error occurs (overrides Backup Jobs)</label>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="control-label col-sm-2">SMTP Mail Settings</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" name="hostname" placeholder="Hostname" value="{{.Mail.Hostname}}"><br>
+                            <input class="form-control" type="number" name="port" placeholder="Port" value="{{.Mail.Port}}"><br>
+                            <input class="form-control" type="text" name="username" placeholder="Username" value="{{.Mail.Username}}"><br>
+                            <input class="form-control" type="password" name="mailpassword" placeholder="Password" value="{{.Mail.Password}}"><br>
+                            <input class="form-control" type="email" name="from" placeholder="From" value="{{.Mail.From}}"><br>
+                            <input class="form-control" type="email" name="recipient" placeholder="Recipient" value="{{.Mail.Recipient}}"><br>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-primary" type="submit" name="save" value="Save" title="Save"><span class="glyphicon glyphicon-ok"></span></button>
+                                <button class="btn btn-default" type="submit" name="save" value="Send" title="After you press this, you should see a mail in your inbox in a few seconds. If that's not the case, see if your credentials are correct.">Save and send test Email</button>
+                                <a class="btn btn-default" href="/settings" title="Remove"><span class="glyphicon glyphicon-remove"></span></a>
+                            </div>
+                        </div>
+                    </div>
+                    {{end}}
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

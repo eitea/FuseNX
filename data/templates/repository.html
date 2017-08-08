@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Repositories</title>
+    {{template "imports"}}
+</head>
+
+<body>
+    {{template "navbar" .}}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="page-header">Repositories</h1>
+                <div class="btn-group" role="group">
+                    <a class="btn btn-primary" href="/newrepository" title="Create new repository">New Repository</a>
+                    <a class="btn btn-default" href="/newrepository?import=true">Import existing Repository</a>
+                </div>
+                <br><br> {{if .Config.Repos}}
+                <table class="table table-hover table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Repository Name</th>
+                            <th>ID</th>
+                            <th>Type</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    {{range .Config.Repos}}
+                    <tr>
+                        <td>{{.Name}}</td>
+                        <td>{{.ID}}</td>
+                        <td>{{.Type}}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-primary" onclick="restoreLatest('{{.ID}}')">Restore latest Snapshot</button>
+                                <a class="btn btn-default" href="/filebrowser?repoid={{.ID}}">{{if ne .Location ``}}Manual Backup{{else}}Choose local location{{end}}</a>
+                                <a class="btn btn-default" href="/snapshot?id={{.ID}}" title="List Snapshots"><span class="glyphicon glyphicon-list"></span></a>                                
+                                <a class="btn btn-default" href="/editrepository?repoid={{.ID}}" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
+                                <a title="Deletes Repository from FuseNX. To delete the Repository permanently, delete the repository folder" href="/deleterepository?repoid={{.ID}}"
+                                    class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {{end}}
+                </table>
+                {{end}}
+            </div>
+        </div>
+    </div>
+    <script>
+        function restoreLatest(repoid) {
+            var target = prompt("Folder to restore to: ")
+            window.location.replace("/restore?target=" + target + "&snapshotid=latest&repoid=" + repoid)
+        }
+    </script>
+</body>
+
+</html>

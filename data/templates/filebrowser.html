@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Files</title>
+    {{template "imports"}}
+</head>
+
+<body>
+    {{template "navbar" .}}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="page-header">Files</h1>
+                {{if .CurrentBackupJob.ID}}
+                <a class="btn btn-primary" href="/editbackupjob?jobid={{.CurrentBackupJob.ID}}">Back</a><br><br>
+                {{else if .CurrentRepo.ID}}
+                <a class="btn btn-primary" href="/repository">Back</a><br><br>                
+                {{end}}
+                <form class="form form-inline" autocomplete="off">
+                    <input type="hidden" name="repoid" value="{{.CurrentRepo.ID}}">
+                    <input type="hidden" name="jobid" value="{{.CurrentBackupJob.ID}}">
+                    <div class="input-group">
+                        <span class="input-group-btn">
+                        <a class="btn btn-primary" href="/filebrowser?curDir={{dir .CurrentDirectory}}&repoid={{.CurrentRepo.ID}}&jobid={{.CurrentBackupJob.ID}}" title="Up"> 
+                            <span class="glyphicon glyphicon-arrow-up"></span>
+                        </a>
+                        </span>
+                        <input type="text" name="curDir" value="{{.CurrentDirectory}}" title="Manually enter path" class="form-control">
+                        <span class="input-group-btn">
+                        <button type="submit"  class="btn btn-default" title="Change Directory">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                        <button class="btn btn-default" id="new" title="New Folder">
+                            <span class="glyphicon glyphicon-plus-sign"></span>
+                        </button>
+                        </span>
+                    </div>
+                </form>
+
+                <h3>
+                    <small>{{dir .CurrentDirectory}}</small> {{base .CurrentDirectory}}
+                </h3>
+                <table class="table table-hover table-bordered table-striped">
+                    {{$repoid := .CurrentRepo.ID}} {{$repolocation := .CurrentRepo.Location}} {{$jobid := .CurrentBackupJob.ID}} {{$jobfiles := .CurrentBackupJob.Files}}{{range .Files}}
+                    {{$contains := containsfile $jobfiles .Path}}
+                    <tr {{if $contains }} class="success" {{end}}>
+                        <td class="col-xs-11">{{if .FileInfo.IsDir}} <a href="/filebrowser?curDir={{.Path}}&repoid={{$repoid}}&jobid={{$jobid}}">{{.FileInfo.Name}}</a>{{else}}{{.FileInfo.Name}}{{end}}</td>
+                        <td class="col-xs-1">
+                            <div class="btn-group" role="group">
+                                {{if $repoid}}{{if ne $repolocation ``}}<a class="btn btn-primary" href="/manualbackup?repoid={{$repoid}}&file={{.Path}}">Manual Backup</a>{{else}}<a class="btn btn-primary" href="/newrepository?repoid={{$repoid}}&create=location&location={{.Path}}">Choose Location</a>{{end}}{{end}}
+                                {{if $jobid}}{{if not $contains}} <a class="btn btn-danger" href="/editbackupjob?edit=add&jobid={{$jobid}}&files={{.Path}}"><span class="glyphicon glyphicon-plus"></span></a>{{end}}{{end}}
+                                {{if $jobid}}{{if $contains}}<a class="btn btn-success" href="/editbackupjob?edit=remove&jobid={{$jobid}}&files={{.Path}}"><span class="glyphicon glyphicon-minus"></span></a>{{end}}{{end}}
+                            </div>
+                        </td>
+                    </tr>
+                    {{end}}
+                </table>
+            </div>
+        </div>
+    </div>
+<script>
+    $("#new").click(function(e){
+        e.preventDefault()
+        window.location.replace("/filebrowser?curDir={{.CurrentDirectory}}&repoid={{.CurrentRepo.ID}}&jobid={{.CurrentBackupJob.ID}}&new="+prompt("New Folder name: ","New Folder"))
+        return false
+    })
+</script>
+
+
+</body>
+
+</html>

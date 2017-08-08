@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Snapshots</title>
+    {{template "imports"}}
+</head>
+
+<body>
+    {{template "navbar" .}}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="page-header">Snapshots</h1>
+                <a class="btn btn-primary" href="/repository">Back</a><br><br> {{if .Snapshots}}
+                <form class="form" action="/forget" autocomplete="off">
+                    <input type="hidden" name="repoid" value="{{.CurrentRepo.ID}}">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" title="Click + to add another filter" for="modifiers">Snapshots to keep, delete the rest</label>
+                        <div class="modifiers col-sm-10">
+                            <div class="modifier">
+                                <div class="col-sm-4">
+                                    <select required class="form-control" name="modifier">
+                                    <option value="hourly">Hourly</option>
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="yearly">Yearly</option>
+                                    <option value="last">Last</option>
+                                    <option value="tag">Tag </option>
+                                </select>
+                                </div>
+                                <div class="col-sm-6">
+                                    <input required type="text" name="value" class="form-control">
+                                </div>
+                                <div class="col-sm-2">
+                                    <button class="btn btn-default btn-add" type="button">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                    </button>
+                                </div><br><br>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button class="btn btn-default" type="submit" value="Apply">Apply</button>
+                </div>
+            </div>
+            </form>
+            <br>
+            <script>
+                $(".btn-add").click(function (e) {
+                    e.preventDefault()
+                    var clone = $(this).parents(".modifier").clone(true).appendTo(".modifiers")
+                    clone.find(".form-control").val("")
+                    var btn = clone.find(".btn-add")
+                    btn.removeClass("btn-add").unbind("click").addClass("btn-remove").click(function (e) {
+                        e.preventDefault()
+                        var parent = $(this).closest(".modifier")
+                        parent.css("background-color", "red")
+                        $(this).parents(".modifier").remove()
+                    }).find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus")
+                })
+                $(".btn-remove").click(function (e) {
+                    e.preventDefault()
+                    var parent = $(this).closest(".modifier")
+                    parent.css("background-color", "red")
+                    $(this).parents(".modifier").remove()
+                }).find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus")
+            </script>
+            <br>
+
+            <table class="table table-hover table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Tags</th>
+                        <th>Paths</th>
+                        <th>Hostname</th>
+                        <th>Username</th>
+                        <th>Snapshot ID</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                {{$repoid := .CurrentRepo.ID}} {{range .Snapshots}}
+                <tr>
+                    <td>{{.Time}}</td>
+                    <td>
+                        <ul class="list-group">
+                            {{$snapshotid := .ID}} {{range .Tags}}
+                            <li class="list-group-item clearfix">{{.}}<a href="/modifytag?tag={{.}}&operation=remove&snapshotid={{$snapshotid}}&repoid={{$repoid}}"
+                                    class="badge pull-right">&times;</a></li>
+                            {{end}}
+                        </ul>
+                    </td>
+                    <td>
+                        <ul class="list-group">
+                            {{range .Paths}}
+                            <li class="list-group-item">{{.}}</li>
+                            {{end}}
+                        </ul>
+                    </td>
+                    <td>{{.Hostname}}</td>
+                    <td>{{.Username}}</td>
+                    <td>{{trim .ID}}</td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-primary" onclick="restore('{{.ID}}','{{$repoid}}')">Restore</button>
+                            <a href="/snapshotfile?repoid={{$repoid}}&snapshotid={{.ID}}" class="btn btn-default"><span class="glyphicon glyphicon-list"></span></a>
+                            <button class="btn btn-default" onclick="addTag('{{.ID}}','{{$repoid}}')"><span class="glyphicon glyphicon-tag"></span></button>
+                            <a title="Only works for local backups" href="/deletesnapshot?snapshotid={{.ID}}&repoid={{$repoid}}" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></a>
+                        </div>
+                    </td>
+                </tr>
+                {{end}}
+            </table>
+            {{end}}
+        </div>
+    </div>
+    </div>
+    <script>
+                function addTag(snapshotid, repoid) {
+                    var tag = prompt("Add Tag: ")
+                    window.location.replace("/modifytag?tag=" + tag + "&operation=add&snapshotid=" + snapshotid + "&repoid=" + repoid)
+                }
+                function restore(snapshotid, repoid) {
+                    var target = prompt("Folder to restore to: ")
+                    window.location.replace("/restore?target=" + target + "&snapshotid=" + snapshotid + "&repoid=" + repoid)
+                }
+    </script>
+</body>
+
+</html>

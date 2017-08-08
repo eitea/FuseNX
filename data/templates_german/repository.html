@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Archive</title>
+    {{template "imports"}}
+</head>
+
+<body>
+    {{template "navbar" .}}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="page-header">Archive</h1>
+                <div class="btn-group" role="group">
+                    <a class="btn btn-primary" href="/newrepository" title="Neues Archiv erstellen" >Neues Archiv</a>
+                    <a class="btn btn-default" href="/newrepository?import=true" >Existierendes Archiv importieren</a>
+                </div>
+                <br><br> {{if .Config.Repos}}
+                <table class="table table-hover table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>ID</th>
+                            <th>Typ</th>
+                            <th>Aktionen</th>
+                        </tr>
+                    </thead>
+                    {{range .Config.Repos}}
+                    <tr>
+                        <td>{{.Name}}</td>
+                        <td>{{.ID}}</td>
+                        <td>{{.Type}}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-primary" href="/snapshot?id={{.ID}}" title="Schnappschüsse auflisten"><span class="glyphicon glyphicon-list"></span></a>
+                                <button class="btn btn-default" onclick="restoreLatest('{{.ID}}')">Neuesten Schnappschuss wiederherstellen</button>
+                                <a class="btn btn-default" href="/filebrowser?repoid={{.ID}}">{{if ne .Location ``}}Manuelles Backup{{else}}Pfad auswählen{{end}}</a>
+                                <a class="btn btn-default" href="/editrepository?repoid={{.ID}}" title="Bearbeiten"><span class="glyphicon glyphicon-pencil"></span></a>
+                                <a title="Archiv von FuseNX entfernen (löschen sie den Ordner, um alle Daten zu vernichten)" href="/deleterepository?repoid={{.ID}}"
+                                    class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {{end}}
+                </table>
+                {{end}}
+            </div>
+        </div>
+    </div>
+    <script>
+        function restoreLatest(repoid) {
+            var target = prompt("Ordnerpfad für Wiederherstellung: ")
+            window.location.replace("/restore?target=" + target + "&snapshotid=latest&repoid=" + repoid)
+        }
+    </script>
+</body>
+
+</html>

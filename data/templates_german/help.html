@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Hilfe</title>
+    {{template "imports"}}
+</head>
+
+<body>
+    {{template "navbar" .}}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="page-header">Hilfe</h1>
+                <ul class="list-group">
+                    <li class="list-group-item"><a href="https://github.com/restic/restic/releases/tag/v0.7.0">restic Herunterladen</a></li>
+                    <li class="list-group-item"><a href="https://restic.readthedocs.io/en/latest/manual.html">restic Anleitung</a></li>
+                    <li class="list-group-item"><a href="https://restic.readthedocs.io/en/latest/index.html">restic Dokumentation</a></li>
+                    <li class="list-group-item">
+                        <h2>Einführung</h2>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Wo anfangen?</div>
+                            <div class="panel-body">Erstellen Sie zuerst <a target="_blank" href="/repository">ein Archiv</a>.</div>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Ein neues Archiv erstellen</div>
+                            <div class="panel-body">Geben Sie dem Archiv einen beliebigen Namen. Falls Sie den Typ Lokal verwenden, können Sie das
+                                Feld Pfad frei lassen, ansonsten die Tipps am Seitenende befolgen. Stellen Sie sicher, dass
+                                Sie ihr restic Passwort wissen. Weitere Tips für andere Typen finden Sie
+                                <a target="_blank" href="https://restic.readthedocs.io/en/latest/manual.html#initialize-a-repository">hier</a>.</div>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Was kommt als nächstes?</div>
+                            <div class="panel-body">Gehen Sie als nächstes zu <a target="_blank" href="/backupjob"> Backup Aufgaben </a> und erstellen
+                                Sie eine neue. Als Archiv wählen Sie das vorhin erstellte Archiv. Der Name der Aufgabe kann
+                                beliebig gewählt werden. Falls Sie Emails erhalten wollen, wenn ein Backup fehlschlägt oder
+                                erfolgreich ist, müssen Sie nach dem Erstellen der Aufgabe zu den Einstellungen gehen. Durch
+                                Backup Planen wird die Aufgabe automatisch ab dem Startdatum ausgeführt. Der Abstand der
+                                Wiederholungen kann durch Wiederholen geändert werden. Dateien, die gesichert werden sollen,
+                                können unter Dateien manuell eingegeben werden oder Sie klicken auf speichern und durchsuchen,
+                                um Dateien auszuwählen. </div>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Einstellungen und Email</div>
+                            <div class="panel-body">Unter dem Punkt <a target="_blank" href="/settings">Einstellungen</a> können sie das Programm
+                                anpassen. Es ist empfohlen, das Senden von Emails zu erlauben und die erforderlichen Daten
+                                einzugeben. Für das Senden der Emails wird nach Möglichkeit TLS verwendet. Danach auf Speichern
+                                und Testmail schicken klicken, um sich zu vergewissern, dass die Einstellungen richting sind.
+                                Hier sind Beispiele für das korrekte Ausfüllen. <br>
+                                <h5><b>Gmail</b></h5>
+                                <p>Hostname: smtp.gmail.com<br>Port: 587<br>Benutzername, Von, Empfänger: Ihre Email-Adresse<br>Passwort:
+                                    Ihr Passwort</p>
+                                <h5><b>Outlook</b></h5>
+                                <p>Hostname: smtp-mail.outlook.com/smtp.live.com<br>Port: 587<br>Benutzername, Von, Empfänger:
+                                    Ihre Email-Adresse<br>Passwort: Ihr Passwort</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <h2>Sonstiges</h2>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Meine Schnappschüsse tauchen nicht sofort auf</div>
+                            <div class="panel-body">Das ist normal, da das Erstellen der Schnappschüsse im Hintergrund erfolgt und je nach Dateigröße
+                                lange dauert.</div>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Die Backup Aufgaben werden nicht ausgeführt</div>
+                            <div class="panel-body">Vergewissern Sie sich, dass ihr Betriebssystem mindestens Windows 10 ist und sie das Programm
+                                mit Administratorrechten ausführen.</div>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Ich habe mein Passwort vergessen</div>
+                            <div class="panel-body">Wenn Sie ihr FuseNX Passwort verlieren, können Sie es mit einem Klick auf Passwort vergessen
+                                wiederherstellen, sofern ihre Email-Einstellungen richtig sind. Sollten Sie keine Email angegeben
+                                haben, kommen Sie durch das Command Line Tool restic an ihre Daten. </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <h2>Über dieses Programm</h2>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Version</div>
+                            <div class="panel-body">
+                                Version: {{.Version}}<br> Restic Version: 0.6.1<br>
+                            </div>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Restic Lizenz</div>
+                            <div class="panel-body">
+                                <pre>Copyright (c) 2014, Alexander Neumann &lt;alexander@bumpern.de&gt;
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
+                            </div>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Go Bindata Assetfs Lizenz</div>
+                            <div class="panel-body">
+                                <pre>Copyright (c) 2014, Elazar Leibovich
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

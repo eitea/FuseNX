@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Help</title>
+    {{template "imports"}}
+</head>
+
+<body>
+    {{template "navbar" .}}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1 class="page-header">Help</h1>
+                <ul class="list-group">
+                    <li class="list-group-item"><a href="https://github.com/restic/restic/releases/tag/v0.7.0">restic Downloads</a></li>
+                    <li class="list-group-item"><a href="https://restic.readthedocs.io/en/latest/manual.html">restic Manual</a></li>
+                    <li class="list-group-item"><a href="https://restic.readthedocs.io/en/latest/index.html">restic Documentation</a></li>
+                    <li class="list-group-item">
+                        <h2>Guide</h2>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Installing restic</div>
+                            <div class="panel-body">Go to <a href="https://github.com/restic/restic/releases/tag/v0.7.0">restic download page </a>and
+                                download restic. Move it somewhere and add the directory to the Path environment variable.</div>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Where to start?</div>
+                            <div class="panel-body">First go to <a target="_blank" href="/repository">the Repository section</a>. Create a new Repository.
+                                Make sure you have <a href="https://github.com/restic/restic/releases/tag/v0.7.0">restic installed</a>.</div>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Creating a Repository</div>
+                            <div class="panel-body">If you are using a local backup, type an absolute path like "C:\backup" or an relative path e.g.
+                                "backup". A relative path creates a repository relative to this program. Be sure to remember
+                                your restic password.<br>If you are using other types of repositories, look at the tips at
+                                the bottom and
+                                <a target="_blank" href="https://restic.readthedocs.io/en/latest/manual.html#initialize-a-repository">here</a>.</div>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">What next?</div>
+                            <div class="panel-body">Head on over to<a target="_blank" href="/backupjob"> Backup Jobs </a> and create a new one. Be
+                                sure to include at least one folder to start with. Then you can save and browse more files
+                                to include in your Backup.<br>If this is your first time, try repeating every minute and
+                                see if your backup turns green. If not, you might have started FuseNX without administrator
+                                rights, put in a too small repeat (less than 1 minute) or set the start date too far in the
+                                future or past.</div>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Settings and Email</div>
+                            <div class="panel-body">Go to <a target="_blank" href="/settings">Settings</a> to customize FuseNX. It is recommended
+                                to set up email so you will be notified when backups complete. TLS is used when sending mails.
+                                Here are a few examples. <br>
+                                <h5><b>Gmail</b></h5>
+                                <p>Hostname: smtp.gmail.com<br>Port: 587<br>Username, From, Recipient: your email address<br>Password:
+                                    your password</p>
+                                <h5><b>Outlook</b></h5>
+                                <p>Hostname: smtp-mail.outlook.com/smtp.live.com<br>Port: 587<br>Username, From, Recipient:
+                                    your email address<br>Password: your password</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <h2>Issues</h2>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">My Snapshots won't show up immediately</div>
+                            <div class="panel-body">Creating snapshots is handled in the Background. If your Backup Job contains many large files,
+                                wait a few minutes before refreshing the page. </div>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">My Backup Jobs aren't working</div>
+                            <div class="panel-body">If scheduled tasks won't run, add the restic executable to <var>PATH</var>. If this still doesn't
+                                work, move the restic executable next to this executable.<br>Also FuseNX needs Administrator
+                                rights to interact with scheduled tasks.</div>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">I forgot my password</div>
+                            <div class="panel-body">Losing your password means that your data is irrecoverably lost. If you have set up SMTP, click
+                                on "Forgot Password". This only affects FuseNX. Your data in restic repositories is safe
+                                if you still have the restic password. </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <h2>About this Program</h2>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Version</div>
+                            <div class="panel-body">
+                                Version: {{.Version}}<br> Restic Version: 0.6.1<br>
+                            </div>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Restic License</div>
+                            <div class="panel-body">
+                                <pre>Copyright (c) 2014, Alexander Neumann &lt;alexander@bumpern.de&gt;
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
+                            </div>
+                        </div>
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Go Bindata Assetfs License</div>
+                            <div class="panel-body">
+                                <pre>Copyright (c) 2014, Elazar Leibovich
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,65 @@
+{{define "navbar"}}
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+                    <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+            </button>
+            <a class="eitea-logo navbar-left" href="/gui">
+                <img alt="Logo" src="/staticfiles/favicon.png">
+            </a>
+            <a class="navbar-brand" href="/gui">FuseNX</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/repository">Repositories</a></li>
+                <li><a href="/backupjob">Backup Jobs</a></li>
+                <li><a href="/settings">Settings</a></li>
+                <li><a href="/help">Help</a></li>
+                <li><a href="/exit"><span class="glyphicon glyphicon-off"></span></a></li>
+                <li><a href="/pw?logout=true"><span class="glyphicon glyphicon-log-out"></span></a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{{if .Message}}
+<div class="sticky-alert row">
+    <div class="alert alert-info alert-dismissable col-sm-offset-4 col-sm-4 alert-transparent">
+        <a href="#" class="close" data-dismiss="alert">&times;</a> <span class="alert-message">{{.Message}}</span>
+    </div>
+</div>
+{{end}}
+
+<script>
+    //{{if .Config.Settings.Tips}}
+    $(document).ready(function () { //initializing tooltips
+        $('[title]').tooltip();
+    });
+    //{{end}}
+    //{{if .Config.Settings.AutomaticPageReload}}
+    $(document).ready(function () {
+        setTimeout(function () {
+            location.reload(true)
+        }, 1000 * 60 * 5) //5 Minutes
+    })
+    //{{end}}
+    //{{if .Config.Settings.AutomaticScroll}}
+    $(document).scroll(function () {
+        document.cookie = "scroll=" + $(window).scrollTop()
+    })
+    $(document).ready(function () {
+        decodeURIComponent(document.cookie).split(";").forEach(function (val) {
+            var cookie = val.trim().split("=")
+            if (cookie[0] == "scroll") {
+                $(window).scrollTop(parseInt(cookie[1]))
+                return
+            }
+        })
+    })
+    //{{end}}
+    setInterval(function () {
+        $.ajax({ url: "/alive" })
+    }, 1000)
+
+</script>
+{{end}}
