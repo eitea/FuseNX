@@ -38,6 +38,7 @@ var (
 	passwordCorrect bool
 	configFilePath  string
 	shutdownTime    time.Time
+	isAdmin         bool
 )
 
 const (
@@ -86,6 +87,14 @@ func serveGUI() {
 			fmt.Println("Besuchen Sie http://localhost/gui um das GUI zu sehen (automatischer Start des Browsers in den Einstellungen aktivierbar)")
 		}
 	}
+	go func() {
+		output, err := exec.Command("schtasks", "/create", "/tn", "Eitea FuseNX Test Task", "/tr", "cmd", "/sc", "weekly", "/sd", time.Now().Format("02/01/2006"), "/st", time.Now().Add(-5*time.Minute).Format("15:04"), "/f").CombinedOutput()
+		exec.Command("schtasks", "/delete", "/tn", "Eitea FuseNX Test Task", "/f").CombinedOutput()
+		if err == nil {
+			isAdmin = true
+		}
+		fmt.Println("IsAdmin: ", isAdmin, string(output), err)
+	}()
 
 	parseAllTemplates()
 

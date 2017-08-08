@@ -202,7 +202,6 @@ func newRepositoryHandler(w http.ResponseWriter, r *http.Request) {
 			} else {
 				msg.setSuccess("Created Repository")
 			}
-
 		} else {
 			msg.setError(err.Error())
 		}
