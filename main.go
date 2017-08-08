@@ -49,8 +49,6 @@ const (
 )
 
 func main() {
-	passwordCorrect = true
-
 	initConfig()
 	os.Setenv("Path", os.Getenv("Path")+";"+filepath.Dir(os.Args[0])) // sets Path to include restic next to this executable
 	if err := exec.Command("restic", "help").Start(); err != nil {
@@ -87,13 +85,10 @@ func serveGUI() {
 			fmt.Println("Besuchen Sie http://localhost/gui um das GUI zu sehen (automatischer Start des Browsers in den Einstellungen aktivierbar)")
 		}
 	}
-	go func() {
-		output, err := exec.Command("schtasks", "/create", "/tn", "Eitea FuseNX Test Task", "/tr", "cmd", "/sc", "weekly", "/sd", time.Now().Format("02/01/2006"), "/st", time.Now().Add(-5*time.Minute).Format("15:04"), "/f").CombinedOutput()
+	go func() { // Testing for admin permission
+		_, err := exec.Command("schtasks", "/create", "/tn", "Eitea FuseNX Test Task", "/tr", "cmd", "/sc", "weekly", "/sd", time.Now().Format("02/01/2006"), "/st", time.Now().Add(-5*time.Minute).Format("15:04"), "/ru", "SYSTEM", "/f").CombinedOutput()
 		exec.Command("schtasks", "/delete", "/tn", "Eitea FuseNX Test Task", "/f").CombinedOutput()
-		if err == nil {
-			isAdmin = true
-		}
-		fmt.Println("IsAdmin: ", isAdmin, string(output), err)
+		isAdmin = err == nil
 	}()
 
 	parseAllTemplates()
@@ -136,7 +131,6 @@ func serveGUI() {
 	http.Handle("/staticfiles/", http.StripPrefix("/staticfiles/", http.FileServer(&assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir, AssetInfo: AssetInfo, Prefix: "data/staticfiles"})))
 
 	//Start Server
-
 	http.ListenAndServe(":80", nil)
 	for i := 81; i < 60000; i++ {
 		if configData.Settings.Language == "german" {

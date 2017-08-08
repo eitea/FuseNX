@@ -18,21 +18,6 @@ import (
 	"time"
 )
 
-//getMinutesDuration returns the minutes in a duration (0-59)
-func getMinutesDuration(r time.Duration) int {
-	return int(r.Minutes()) % 60
-}
-
-//getHoursDuration returns the hours in a duration (0-∞)
-func getHoursDuration(r time.Duration) int {
-	return int(r.Hours())
-}
-
-//getSecondsDuration returns the seconds in a duration (0-59)
-func getSecondsDuration(r time.Duration) int {
-	return int(r.Seconds()) % 60
-}
-
 //setActiveRepoEnvironmentVariables sets environment variables
 func setActiveRepoEnvironmentVariables(id int) {
 	repo, err := getRepo(id)
@@ -191,9 +176,6 @@ func parseTemplate(path string) *template.Template {
 		"reponame":     getRepoName,
 		"join":         strings.Join,
 		"formattime":   formatTime,
-		"hours":        getHoursDuration,
-		"minutes":      getMinutesDuration,
-		"seconds":      getSecondsDuration,
 		"containsfile": containsFile,
 		"trim":         trimLongID,
 		"timenow":      timeNow,
@@ -255,27 +237,16 @@ func encrypt(plaintext, key []byte) []byte {
 
 //initConfig creates a config file at first program start and loads all Repos an BackupJobs
 func initConfig() {
-	switch runtime.GOOS {
-	case "linux":
-		// configFilePath = "~/.config/eitea/backup.conf"
-		// if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
-		// 	os.MkdirAll("~/.config/eitea/", 0777)
-		// 	configData = ConfigData{Settings: Setting{AutomaticPageReload: true, AutomaticScroll: true, OpenBrowser: true, ShowMessages: true, Tips: true}}
-		// 	writeToConfig()
-		// }
-		// readFromConfig()
-	case "windows":
-		configFilePath = os.Getenv("ProgramData") + "\\eitea\\backup.conf"
-		if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
-			os.MkdirAll(os.Getenv("ProgramData")+"\\eitea", 0777)
-			configData = ConfigData{Settings: Setting{AutomaticPageReload: true, AutomaticScroll: true, OpenBrowser: true, ShowMessages: true, Tips: true}}
-			if initial.ID != 0 {
-				configData.Repos = append(configData.Repos, initial)
-			}
-			writeToConfig()
+	configFilePath = os.Getenv("ProgramData") + "\\eitea\\backup.conf"
+	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
+		os.MkdirAll(os.Getenv("ProgramData")+"\\eitea", 0777)
+		configData = ConfigData{Settings: Setting{AutomaticPageReload: true, AutomaticScroll: true, OpenBrowser: true, ShowMessages: true, Tips: true}}
+		if initial.ID != 0 {
+			configData.Repos = append(configData.Repos, initial)
 		}
-		readFromConfig()
+		writeToConfig()
 	}
+	readFromConfig()
 }
 
 //writeToConfig saves the config file

@@ -159,7 +159,7 @@ type message struct {
 	SeenByUser bool // whether shown to the user or not
 }
 
-//set sets message to "<msg>"
+//set sets message to msg
 func (m *message) set(msg string) {
 	m.Value = msg
 	m.SeenByUser = false
