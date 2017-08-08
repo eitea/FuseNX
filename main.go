@@ -48,6 +48,8 @@ const (
 )
 
 func main() {
+	passwordCorrect = true
+
 	initConfig()
 	os.Setenv("Path", os.Getenv("Path")+";"+filepath.Dir(os.Args[0])) // sets Path to include restic next to this executable
 	if err := exec.Command("restic", "help").Start(); err != nil {

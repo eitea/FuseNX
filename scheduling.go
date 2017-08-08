@@ -74,62 +74,22 @@ func performScheduledBackup() {
 
 //createScheduledTask creates a scheduled task with Task Scheduler
 func createScheduledTask(job BackupJob) error {
-	cmd := exec.Command("powershell.exe", "-NoExit", "-Command", "-")
-	stdin, _ := cmd.StdinPipe()
-	stdErr, _ := cmd.StderrPipe()
 	path := os.Args[0]
-	cmd.Start()
-	stdin.Write([]byte("$Trigger = New-ScheduledTaskTrigger -Once -At \"" + job.Start.Format("01/02/2006 15:04:05") + "\" -RepetitionInterval (New-TimeSpan -Hours " + strconv.Itoa(int(job.Repeat.Hours())) + " -Minutes " + strconv.Itoa(int(job.Repeat.Minutes())%60) + " -Seconds " + strconv.Itoa(int(job.Repeat.Seconds())%60) + ")" + "\r\n"))
-	stdin.Write([]byte("$Action = New-ScheduledTaskAction -Execute \"" + path + "\" -Argument \"job  " + strconv.Itoa(job.ID) + "\"" + "\r\n"))
-	stdin.Write([]byte("$InputObject = New-ScheduledTask -Action $Action -Trigger $Trigger" + "\r\n"))
-	stdin.Write([]byte(`Register-ScheduledTask -TaskName "Eitea FuseNX job ` + strconv.Itoa(job.ID) + `" -InputObject $InputObject -User "NT AUTHORITY\SYSTEM"` + "\r\n"))
-	stdin.Close()
-	errorMessage := make([]byte, 1000)
-	bytesRead, _ := stdErr.Read(errorMessage)
-	errorMessage = errorMessage[:bytesRead]
-	if bytesRead > 1 {
-		_, err := exec.Command("schtasks", "/create", "/tn", "Eitea FuseNX job "+strconv.Itoa(job.ID), "/tr", path+" job "+strconv.Itoa(job.ID), "/sc", "ONCE", "/sd", job.Start.Format("02/01/2006"), "/st", job.Start.Format("15:04"), "/ri", strconv.Itoa(int(job.Repeat.Minutes())), "/du", "9999:59", "/ru", "SYSTEM").CombinedOutput()
-		if err != nil {
-			return errors.New(string(errorMessage))
-		}
+	output, err := exec.Command("schtasks", "/create", "/tn", "Eitea FuseNX job "+strconv.Itoa(job.ID), "/tr", path+" job "+strconv.Itoa(job.ID), "/sc", "weekly", "/sd", job.Start.Format("02/01/2006"), "/st", job.Start.Format("15:04"), "/d", job.Weeks.formatDays(), "/mo", job.Weeks.formatInterval(), "/f").CombinedOutput()
+	if err != nil {
+		return errors.New(err.Error() + " - " + string(output))
 	}
 	return nil
 }
 
 //editScheduledTask edits a task
 func editScheduledTask(job BackupJob) error {
-	cmd := exec.Command("powershell.exe", "-NoExit", "-Command", "-")
-	stdin, _ := cmd.StdinPipe()
-	stdErr, _ := cmd.StderrPipe()
-	path := os.Args[0]
-	cmd.Start()
-	stdin.Write([]byte("$Trigger = New-ScheduledTaskTrigger -Once -At \"" + job.Start.Format("01/02/2006 15:04:05") + "\" -RepetitionInterval (New-TimeSpan -Hours " + strconv.Itoa(int(job.Repeat.Hours())) + " -Minutes " + strconv.Itoa(int(job.Repeat.Minutes())%60) + " -Seconds " + strconv.Itoa(int(job.Repeat.Seconds())%60) + ")" + "\r\n"))
-	stdin.Write([]byte("$Action = New-ScheduledTaskAction -Execute \"" + path + "\" -Argument \"job  " + strconv.Itoa(job.ID) + "\"" + "\r\n"))
-	stdin.Write([]byte(`Set-ScheduledTask "Eitea FuseNX job ` + strconv.Itoa(job.ID) + `" -Trigger $Trigger -Action $Action -User "NT AUTHORITY\SYSTEM"` + "\r\n"))
-	stdin.Close()
-	errorMessage := make([]byte, 1000)
-	bytesRead, _ := stdErr.Read(errorMessage)
-	errorMessage = errorMessage[:bytesRead]
-	if bytesRead > 1 {
-		_, err := exec.Command("schtasks", "/change", "/tn", "Eitea FuseNX job "+strconv.Itoa(job.ID), "/tr", path+" job "+strconv.Itoa(job.ID), "/sd", job.Start.Format("02/01/2006"), "/st", job.Start.Format("15:04"), "/ri", strconv.Itoa(int(job.Repeat.Minutes())), "/du", "9999:59", "/ru", "SYSTEM").CombinedOutput()
-		if err != nil {
-			return errors.New(string(errorMessage))
-		}
-	}
-	return nil
+	return createScheduledTask(job)
 }
 
 //deleteScheduledTask deletes a task
 func deleteScheduledTask(jobID int) {
-	cmd := exec.Command("powershell.exe", "-NoExit", "-Command", "-")
-	stdin, _ := cmd.StdinPipe()
-	stderr, _ := cmd.StderrPipe()
-	cmd.Start()
-	stdin.Write([]byte(`Unregister-ScheduledTask -TaskName "Eitea FuseNX job ` + strconv.Itoa(jobID) + `" -Confirm:$false ` + "\r\n"))
-	stdin.Close()
-	if num, _ := stderr.Read(make([]byte, 100)); num > 1 {
-		exec.Command("schtasks", "/delete", "/tn", "Eitea FuseNX job "+strconv.Itoa(jobID), "/f").CombinedOutput()
-	}
+	exec.Command("schtasks", "/delete", "/tn", "Eitea FuseNX job "+strconv.Itoa(jobID), "/f").CombinedOutput()
 }
 
 //sendMail sends a mail according to settings

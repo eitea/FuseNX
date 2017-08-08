@@ -48,13 +48,16 @@
                         </div>
                     </div>
                     <div class="form-group" id="repeat">
-                        <label for="repeat" class="control-label col-sm-2">Repeat</label>
+                        <label for="repeat" class="control-label col-sm-2">Weekly Repeat</label>
                         <div class="col-sm-10">
-                            <div class="input-group col-sm-12" title="make sure repeat is at least 1 minute">
-                                <input placeholder="Hours" title="Hours" type="number" name="hours" required value="24" class="form-control" style="width:33.3333%">
-                                <input placeholder="Minutes" title="Minutes" type="number" name="minutes" required value="0" class="form-control" style="width:33.3333%">
-                                <input placeholder="Seconds" title="Seconds" type="number" name="seconds" required value="0" class="form-control" style="width:33.3333%">
-                            </div>
+                            <input placeholder="Interval (Repeat every n weeks (n [1;52]))" type="number" min="1" max="52" name="interval" required class="form-control">
+                            <div class="checkbox"><label><input type="checkbox" name="mon" >Monday</label></div>
+                            <div class="checkbox"><label><input type="checkbox" name="tue" >Tuesday</label></div>
+                            <div class="checkbox"><label><input type="checkbox" name="wed" >Wednesday</label></div>
+                            <div class="checkbox"><label><input type="checkbox" name="thu" >Thursday</label></div>
+                            <div class="checkbox"><label><input type="checkbox" name="fri" >Friday</label></div>
+                            <div class="checkbox"><label><input type="checkbox" name="sat" >Saturday</label></div>
+                            <div class="checkbox"><label><input type="checkbox" name="sun" >Sunday</label></div>
                         </div>
                     </div>
                     <div class="form-group" id="start">

@@ -48,13 +48,16 @@
                         </div>
                     </div>
                     <div class="form-group" id="repeat">
-                        <label for="repeat" class="control-label col-sm-2">Wiederholen</label>
+                        <label for="repeat" class="control-label col-sm-2">Wöchentliches Wiederholen</label>
                         <div class="col-sm-10">
-                            <div class="input-group col-sm-12" title="Mindestdauer: 1 Minute">
-                                <input placeholder="Hours" title="Stunden" type="number" name="hours" required value="24" class="form-control" style="width:33.3333%">
-                                <input placeholder="Minutes" title="Minuten" type="number" name="minutes" required value="0" class="form-control" style="width:33.3333%">
-                                <input placeholder="Seconds" title="Sekunden" type="number" name="seconds" required value="0" class="form-control" style="width:33.3333%">
-                            </div>
+                            <input placeholder="Intervall (Wiederhole alle n Wochen (n [1;52]))" type="number" min="1" max="52" name="interval" required class="form-control">
+                            <div class="checkbox"><label><input type="checkbox" name="mon" >Montag</label></div>
+                            <div class="checkbox"><label><input type="checkbox" name="tue" >Dienstag</label></div>
+                            <div class="checkbox"><label><input type="checkbox" name="wed" >Mittwoch</label></div>
+                            <div class="checkbox"><label><input type="checkbox" name="thu" >Donnerstag</label></div>
+                            <div class="checkbox"><label><input type="checkbox" name="fri" >Freitag</label></div>
+                            <div class="checkbox"><label><input type="checkbox" name="sat" >Samstag</label></div>
+                            <div class="checkbox"><label><input type="checkbox" name="sun" >Sonntag</label></div>
                         </div>
                     </div>
                     <div class="form-group" id="start">

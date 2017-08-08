@@ -29,7 +29,7 @@
                     <tr class="{{if .LatestRunSuccessful}}success{{else}}danger{{end}}" title="{{if .LatestRunSuccessful}}Latest automatic Backup Successful{{else}}Latest automatic Backup not successful or Backup Job not started yet{{end}}">
                         <td>{{.Name}}</td>
                         <td>{{formattime .Start}}</td>
-                        <td>{{.Repeat}}</td>
+                        <td>{{.Weeks}}</td>
                         <td>{{if .Scheduled}}Ja{{else}}Nein{{end}}</td>
                         <td>{{reponame .RepoID}}</td>
                         <td>

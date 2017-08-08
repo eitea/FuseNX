@@ -608,14 +608,9 @@ func newBackupJobHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return
 		}
-		//repeat, err := time.ParseDuration(r.Form["repeat"][0])
-		repeat, err := time.ParseDuration(r.Form["hours"][0] + "h" + r.Form["minutes"][0] + "m" + r.Form["seconds"][0] + "s")
 		if err != nil {
 			msg.setError(err.Error())
 			return
-		}
-		if repeat.Minutes() < 1 {
-			repeat, _ = time.ParseDuration("1m")
 		}
 		start, err := time.Parse("2006-01-02T03:04", r.Form["start"][0])
 		if err != nil {
@@ -639,15 +634,26 @@ func newBackupJobHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			mailerror, mailsuccess = false, false
 		}
+		interval, _ := strconv.Atoi(r.Form["interval"][0])
+		weeks := WeekSchedule{
+			Interval: interval,
+			MON:      r.Form["mon"] != nil,
+			TUE:      r.Form["tue"] != nil,
+			WED:      r.Form["wed"] != nil,
+			THU:      r.Form["thu"] != nil,
+			FRI:      r.Form["fri"] != nil,
+			SAT:      r.Form["sat"] != nil,
+			SUN:      r.Form["sun"] != nil,
+		}
 		readFromConfig()
-		configData.BackupJobs = append(configData.BackupJobs, BackupJob{Name: name, Files: files, ID: id, RepoID: repoID, Repeat: repeat, Start: start, Scheduled: scheduled, MailError: mailerror, MailSuccess: mailsuccess})
+		configData.BackupJobs = append(configData.BackupJobs, BackupJob{Name: name, Files: files, ID: id, Weeks: weeks, RepoID: repoID, Start: start, Scheduled: scheduled, MailError: mailerror, MailSuccess: mailsuccess})
 		writeToConfig()
 		err = createScheduledTask(configData.BackupJobs[len(configData.BackupJobs)-1])
 		if err != nil {
 			if configData.Settings.Language == "german" {
-				msg.setError("Konnte Backup Aufgabe nicht erstellen. Sind Sie Administrator und auf Windows 10? (versuchen Sie 'Als Administrator ausführen')")
+				msg.setError("Konnte Backup Aufgabe nicht erstellen. Sind Sie Administrator und auf Windows 10, 8 oder 7? (versuchen Sie 'Als Administrator ausführen')")
 			} else {
-				msg.setError("Couldn't create Backup Job. Are you administrator and on Windows 10? (try 'Run as administrator')")
+				msg.setError("Couldn't create Backup Job. Are you administrator and on Windows 10, 8 or 7? (try 'Run as administrator')")
 			}
 			deleteBackupJob(configData.BackupJobs[len(configData.BackupJobs)-1].ID)
 		} else {
@@ -743,13 +749,16 @@ func editBackupJobHandler(w http.ResponseWriter, r *http.Request) {
 		if len(name) == 0 || len(files) == 0 || err != nil {
 			return
 		}
-		repeat, err := time.ParseDuration(r.Form["hours"][0] + "h" + r.Form["minutes"][0] + "m" + r.Form["seconds"][0] + "s")
-		if err != nil {
-			msg.setError(err.Error())
-			return
-		}
-		if repeat.Minutes() < 1 {
-			repeat, _ = time.ParseDuration("1m")
+		interval, _ := strconv.Atoi(r.Form["interval"][0])
+		weeks := WeekSchedule{
+			Interval: interval,
+			MON:      r.Form["mon"] != nil,
+			TUE:      r.Form["tue"] != nil,
+			WED:      r.Form["wed"] != nil,
+			THU:      r.Form["thu"] != nil,
+			FRI:      r.Form["fri"] != nil,
+			SAT:      r.Form["sat"] != nil,
+			SUN:      r.Form["sun"] != nil,
 		}
 		scheduled := r.Form["schedule"] != nil
 		var mailerror bool
@@ -774,7 +783,7 @@ func editBackupJobHandler(w http.ResponseWriter, r *http.Request) {
 		configData.BackupJobs[jobIndexToEdit].Name = name
 		configData.BackupJobs[jobIndexToEdit].Files = files
 		configData.BackupJobs[jobIndexToEdit].RepoID = repoID
-		configData.BackupJobs[jobIndexToEdit].Repeat = repeat
+		configData.BackupJobs[jobIndexToEdit].Weeks = weeks
 		configData.BackupJobs[jobIndexToEdit].Start = start
 		configData.BackupJobs[jobIndexToEdit].Scheduled = scheduled
 		configData.BackupJobs[jobIndexToEdit].MailError = mailerror

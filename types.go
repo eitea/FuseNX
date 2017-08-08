@@ -2,6 +2,8 @@ package main
 
 import (
 	"os"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -53,12 +55,65 @@ type BackupJob struct {
 	ID                  int
 	RepoID              int
 	Start               time.Time
-	Repeat              time.Duration
+	Weeks               WeekSchedule
 	Logs                []Log
 	LatestRunSuccessful bool
 	Scheduled           bool
 	MailError           bool //send email when error occurs
 	MailSuccess         bool //send email when backup successful
+}
+
+//WeekSchedule represents the weekly trigger in schtasks
+type WeekSchedule struct {
+	Interval                          int
+	SUN, MON, TUE, WED, THU, FRI, SAT bool
+}
+
+func (ws *WeekSchedule) formatDays() (out string) {
+	if ws.MON {
+		out += "MON,"
+	}
+	if ws.TUE {
+		out += "TUE,"
+	}
+	if ws.WED {
+		out += "WED,"
+	}
+	if ws.THU {
+		out += "THU,"
+	}
+	if ws.FRI {
+		out += "FRI,"
+	}
+	if ws.SAT {
+		out += "SAT,"
+	}
+	if ws.SUN {
+		out += "SUN,"
+	}
+	out = strings.TrimSuffix(out, ",")
+	if len(out) == 0 {
+		out = "SUN"
+	}
+	return
+}
+
+func (ws *WeekSchedule) formatInterval() (out string) {
+	if ws.Interval <= 0 {
+		out = strconv.Itoa(1)
+	} else if ws.Interval >= 52 {
+		out = strconv.Itoa(52)
+	} else {
+		out = strconv.Itoa(ws.Interval)
+	}
+	return
+}
+
+func (ws WeekSchedule) String() string {
+	if configData.Settings.Language == "german" {
+		return "Alle " + ws.formatInterval() + " Wochen am " + ws.formatDays()
+	}
+	return "Every " + ws.formatInterval() + " weeks on " + ws.formatDays()
 }
 
 //Log represents a logged BackupJob
