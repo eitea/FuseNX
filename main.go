@@ -1,3 +1,19 @@
+// FuseNX - BackupGUI
+// Copyright (C) 2017 Eitea
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 package main
 
 import (
@@ -112,6 +128,7 @@ func serveGUI() {
 	http.HandleFunc("/restorefile", restoreFileHandler)   //handler for restoring single files/folders
 	http.HandleFunc("/modifytag", modifyTagHandler)       //handler for adding/removing tags
 	http.HandleFunc("/filebrowser", fileBrowserHandler)   //lets users browse files
+	http.HandleFunc("/getdirectory", getDirectoryHandler) //outputs a list of directories and actions
 	http.HandleFunc("/manualbackup", manualBackupHandler) //back up a file from filebrowser
 	http.HandleFunc("/forget", forgetHandler)             //restics forget command
 
@@ -129,9 +146,6 @@ func serveGUI() {
 	http.HandleFunc("/newrepository", newRepositoryHandler)       //form for creating Repos
 	http.HandleFunc("/deleterepository", deleteRepositoryHandler) //handler for deleting Repos and their BackupJobs
 	http.HandleFunc("/editrepository", editRepositoryHandler)     //form and inpu handler for editing Repos
-
-	http.HandleFunc("/getdirectory", getDirectoryHandler)
-	passwordCorrect = true
 
 	go exitTimer()
 
