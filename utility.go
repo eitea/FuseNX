@@ -156,7 +156,7 @@ func getSnapshotList(repoID int) []Snapshot {
 	if err != nil {
 		msg.setError(err.Error())
 	}
-	snapshotCmd := exec.Command("restic", "-r", repo.Location, "snapshots", "--json")
+	snapshotCmd := exec.Command(resticPath, "-r", repo.Location, "snapshots", "--json")
 	outputBytes, _ := snapshotCmd.CombinedOutput()
 	snapshots := []Snapshot{}
 	json.Unmarshal(outputBytes, &snapshots)
@@ -193,7 +193,7 @@ func getSnapshotFileList(repoID int, snapshotID string) []string {
 	if err != nil {
 		msg.setError(err.Error())
 	}
-	snapshotCmd := exec.Command("restic", "-r", repo.Location, "ls", snapshotID)
+	snapshotCmd := exec.Command(resticPath, "-r", repo.Location, "ls", snapshotID)
 	outputBytes, _ := snapshotCmd.CombinedOutput()
 	files := strings.Split(string(outputBytes), "\n")[1:]
 	return files
@@ -237,9 +237,9 @@ func encrypt(plaintext, key []byte) []byte {
 
 //initConfig creates a config file at first program start and loads all Repos an BackupJobs
 func initConfig() {
-	configFilePath = os.Getenv("ProgramData") + "\\eitea\\backup.conf"
+	configFilePath = os.Getenv("APPDATA") + "\\eitea\\backup.conf"
 	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
-		os.MkdirAll(os.Getenv("ProgramData")+"\\eitea", 0777)
+		os.MkdirAll(os.Getenv("APPDATA")+"\\eitea", 0777)
 		configData = ConfigData{Settings: Setting{AutomaticPageReload: true, AutomaticScroll: true, OpenBrowser: true, ShowMessages: true, Tips: true}}
 		if initial.ID != 0 {
 			configData.Repos = append(configData.Repos, initial)

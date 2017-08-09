@@ -37,6 +37,7 @@ var (
 	msg             message    //for error messages or information to be displayed in the web interface
 	passwordCorrect bool
 	configFilePath  string
+	resticPath      string
 	shutdownTime    time.Time
 	isAdmin         bool
 )
@@ -50,10 +51,12 @@ const (
 
 func main() {
 	initConfig()
-	os.Setenv("Path", os.Getenv("Path")+";"+filepath.Dir(os.Args[0])) // sets Path to include restic next to this executable
-	if err := exec.Command("restic", "help").Start(); err != nil {
+	resticPath = os.Getenv("APPDATA") + "\\eitea\\restic.exe"
+	//os.Setenv("Path", os.Getenv("Path")+";"+filepath.Dir(os.Args[0])) // sets Path to include restic next to this executable
+	if err := exec.Command(resticPath, "help").Start(); err != nil {
 		//restic not found
-		ioutil.WriteFile("restic.exe", MustAsset("data/bin/restic.exe"), 0777)
+		os.MkdirAll(filepath.Dir(resticPath), 0777)
+		ioutil.WriteFile(resticPath, MustAsset("data/bin/restic.exe"), 0777)
 	}
 	if len(os.Args) > 2 { // invoked by Windows Task Scheduler
 		if os.Args[1] == "job" || os.Args[1] == "-job" || os.Args[1] == "/job" {

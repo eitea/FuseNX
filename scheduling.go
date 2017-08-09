@@ -29,7 +29,7 @@ func performScheduledBackup() {
 		os.Exit(1)
 	}
 	setActiveRepoEnvironmentVariables(repo.ID)
-	backupCmd := exec.Command("restic", "-r", repo.Location, "backup")
+	backupCmd := exec.Command(resticPath, "-r", repo.Location, "backup")
 	backupCmd.Args = append(backupCmd.Args, backupJob.Files...)
 	stdErr, _ := backupCmd.StderrPipe()
 	output, runError := backupCmd.Output()

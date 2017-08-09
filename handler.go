@@ -138,7 +138,7 @@ func newRepositoryHandler(w http.ResponseWriter, r *http.Request) {
 			configData.Repos[repoIndexToEdit].Location = r.Form["location"][0]
 			writeToConfig()
 			setActiveRepoEnvironmentVariables(repoID)
-			initCmd := exec.Command("restic", "-r", configData.Repos[repoIndexToEdit].Location, "init")
+			initCmd := exec.Command(resticPath, "-r", configData.Repos[repoIndexToEdit].Location, "init")
 			err = initCmd.Run()
 			if err != nil {
 				msg.setError(err.Error())
@@ -192,7 +192,7 @@ func newRepositoryHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		setEnvironmentVariables("RESTIC_PASSWORD=" + password)
-		initCmd := exec.Command("restic", "-r", location, "init")
+		initCmd := exec.Command(resticPath, "-r", location, "init")
 		if err := initCmd.Run(); err == nil || r.Form["import"] != nil { //only add repo if there is no error initializing it or if importing existing repository
 			readFromConfig()
 			configData.Repos = append(configData.Repos, Repo{Name: name, Type: rType, Location: location, EnvVariables: envVarSlice, ID: id, Password: password})
@@ -241,7 +241,7 @@ func snapshotListHandler(w http.ResponseWriter, r *http.Request) {
 	snapshots := getSnapshotList(repoID)
 	if len(snapshots) == 0 && msg.SeenByUser == true {
 		if configData.Settings.Language == "german" {
-			msg.setError("Konnte keine Schnappschüsse finden")
+			msg.setError("Konnte keine Snapshots finden")
 		} else {
 			msg.setError("Couldn't find any Snapshots")
 		}
@@ -281,7 +281,7 @@ func executeBackupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	setActiveRepoEnvironmentVariables(repo.ID)
-	backupCmd := exec.Command("restic", "-r", repo.Location, "backup")
+	backupCmd := exec.Command(resticPath, "-r", repo.Location, "backup")
 	backupCmd.Args = append(backupCmd.Args, backupJob.Files...)
 	go func() {
 		output, err := backupCmd.Output()
@@ -291,6 +291,11 @@ func executeBackupHandler(w http.ResponseWriter, r *http.Request) {
 			appendLog(jobID, true, "[Manual] Output: "+string(output))
 		}
 	}()
+	if configData.Settings.Language == "german" {
+		msg.set("Backup Aufgabe gestartet")
+	} else {
+		msg.set("Backup Job started")
+	}
 }
 
 //modifyTagHandler adds and removes tags
@@ -314,7 +319,7 @@ func modifyTagHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	tagCmd := exec.Command("restic", "-r", repo.Location, "tag", "--"+operation, tag, snapshotID)
+	tagCmd := exec.Command(resticPath, "-r", repo.Location, "tag", "--"+operation, tag, snapshotID)
 	tagCmd.Run()
 }
 
@@ -339,7 +344,7 @@ func deleteSnapshotHandler(w http.ResponseWriter, r *http.Request) {
 	if _, err := os.Stat(repo.Location + "/snapshots/" + snapshotID); !os.IsNotExist(err) {
 		os.Remove(repo.Location + "/snapshots/" + snapshotID)
 	}
-	pruneCmd := exec.Command("restic", "-r", repo.Location, "prune")
+	pruneCmd := exec.Command(resticPath, "-r", repo.Location, "prune")
 	pruneCmd.Run()
 }
 
@@ -459,7 +464,7 @@ func restoreSnapshotHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	r.ParseForm()
 	if configData.Settings.Language == "german" {
-		msg.setError("Schnappschuss konnte nicht wiederhergestellt werden")
+		msg.setError("Snapshot konnte nicht wiederhergestellt werden")
 	} else {
 		msg.setError("Couldn't restore Snapshot")
 	}
@@ -476,17 +481,16 @@ func restoreSnapshotHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	setActiveRepoEnvironmentVariables(repo.ID)
-	restoreCmd := exec.Command("restic", "-r", repo.Location, "restore", snapshotID, "--target", restoreTarget)
+	restoreCmd := exec.Command(resticPath, "-r", repo.Location, "restore", snapshotID, "--target", restoreTarget)
 	err = restoreCmd.Run()
 	if err != nil {
 		msg.setError(err.Error())
 	} else {
 		if configData.Settings.Language == "german" {
-			msg.setSuccess("Schnappschuss wiederhergestellt")
+			msg.setSuccess("Snapshot wiederhergestellt")
 		} else {
 			msg.setSuccess("Restored Snapshot")
 		}
-
 	}
 }
 
@@ -516,7 +520,7 @@ func restoreFileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	setActiveRepoEnvironmentVariables(repo.ID)
-	restoreCmd := exec.Command("restic", "-r", repo.Location, "restore", snapshotID, "--target", restoreTarget, "--include", file)
+	restoreCmd := exec.Command(resticPath, "-r", repo.Location, "restore", snapshotID, "--target", restoreTarget, "--include", file)
 	err = restoreCmd.Run()
 	if err != nil {
 		msg.setError(err.Error())
@@ -554,7 +558,7 @@ func manualBackupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	setActiveRepoEnvironmentVariables(repo.ID)
-	backupCmd := exec.Command("restic", "-r", repo.Location, "backup", file)
+	backupCmd := exec.Command(resticPath, "-r", repo.Location, "backup", file)
 	backupCmd.Start()
 	if configData.Settings.Language == "german" {
 		msg.setSuccess("Datei gesichert")
@@ -867,7 +871,7 @@ func forgetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	setActiveRepoEnvironmentVariables(repo.ID)
-	forgetCmd := exec.Command("restic", "-r", repo.Location, "forget")
+	forgetCmd := exec.Command(resticPath, "-r", repo.Location, "forget")
 	for idx, modifier := range modifiers {
 		forgetCmd.Args = append(forgetCmd.Args, "--keep-"+modifier, values[idx])
 	}

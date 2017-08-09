@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Schnappschüsse</title>
+    <title>Snapshots</title>
     {{template "imports"}}
 </head>
 
@@ -11,7 +11,7 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <h1 class="page-header">Schnappschüsse</h1>
+                <h1 class="page-header">Snapshots</h1>
                 <a class="btn btn-primary" href="/repository">Zurück</a><br><br> {{if .Snapshots}}
                 <form class="form" action="/forget" autocomplete="off">
                     <input type="hidden" name="repoid" value="{{.CurrentRepo.ID}}">
@@ -79,7 +79,7 @@
                         <th>Dateien</th>
                         <th>Hostname</th>
                         <th>Benutzername</th>
-                        <th>Schnappschuss ID</th>
+                        <th>Snapshots ID</th>
                         <th>Aktionen</th>
                     </tr>
                 </thead>
