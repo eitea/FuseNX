@@ -632,7 +632,7 @@ func newBackupJobHandler(w http.ResponseWriter, r *http.Request) {
 			msg.setError(err.Error())
 			return
 		}
-		start, err := time.Parse("2006-01-02T03:04", r.Form["start"][0])
+		start, err := time.Parse("2006-01-02T15:04", r.Form["start"][0])
 		if err != nil {
 			msg.setError(err.Error())
 		}
@@ -798,7 +798,7 @@ func editBackupJobHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			mailerror, mailsuccess = false, false
 		}
-		start, err := time.Parse("2006-01-02T03:04", r.Form["start"][0])
+		start, err := time.Parse("2006-01-02T15:04", r.Form["start"][0])
 		if err != nil {
 			msg.setError(err.Error())
 		}

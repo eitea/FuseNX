@@ -112,7 +112,7 @@ func openDefaultBrowser() {
 
 //formatTime formats time to look like "2006-01-02T03:04"
 func formatTime(tm time.Time) string {
-	return tm.Format("2006-01-02T03:04")
+	return tm.Format("2006-01-02T15:04")
 }
 
 //timeNow retuns the formatted time
