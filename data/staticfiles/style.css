@@ -86,3 +86,50 @@ td:last-child .btn-group .btn {
 }
 
 .eitea-logo img:hover {}
+
+ul.files {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 1em;
+    text-indent: -1em;
+}
+
+ul.files li {
+    padding-left: 1em;
+    text-indent: -1em;
+    padding-bottom: 0.5em;
+}
+
+ul.files li::before {
+    content: "▷";
+    padding-right: 5px;
+}
+
+ul.files li:hover::before {
+    content: "▶";
+}
+
+ul.files li.open::before {
+    content: "◢";
+}
+
+ul.files li.open:hover::before {
+    content: "◿";
+}
+
+ul.files li.file::before, ul.files li.file:hover::before {
+    content: "▹";
+}
+
+.pointer:hover {
+    cursor: pointer;
+}
+
+.not-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

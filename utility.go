@@ -237,9 +237,9 @@ func encrypt(plaintext, key []byte) []byte {
 
 //initConfig creates a config file at first program start and loads all Repos an BackupJobs
 func initConfig() {
-	configFilePath = os.Getenv("APPDATA") + "\\eitea\\backup.conf"
+	configFilePath = os.Getenv("ProgramData") + "\\eitea\\backup.conf"
 	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
-		os.MkdirAll(os.Getenv("APPDATA")+"\\eitea", 0777)
+		os.MkdirAll(filepath.Dir(configFilePath), 0777)
 		configData = ConfigData{Settings: Setting{AutomaticPageReload: true, AutomaticScroll: true, OpenBrowser: true, ShowMessages: true, Tips: true}}
 		if initial.ID != 0 {
 			configData.Repos = append(configData.Repos, initial)
@@ -304,6 +304,7 @@ func parseAllTemplates() {
 	snapshotFileTemplate = parseTemplate(templateFolder + "snapshotfile.html")
 	editBackupJobTemplate = parseTemplate(templateFolder + "editbackupjob.html")
 	newRepositoryTemplate = parseTemplate(templateFolder + "newrepository.html")
+	directoryListTemplate = parseTemplate(templateFolder + "directorylist.html")
 	editRepositoryTemplate = parseTemplate(templateFolder + "editrepository.html")
 }
 
@@ -342,4 +343,18 @@ func exitTimer() {
 			}
 		}
 	}
+}
+
+//modifyFileList deletes empty strings
+func modifyFileList(s []string) []string {
+	var r []string
+	for _, str := range s {
+		if str != "" {
+			r = append(r, str)
+		}
+	}
+	if len(r) < 1 {
+		r = append(r, "")
+	}
+	return r
 }

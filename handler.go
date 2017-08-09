@@ -598,6 +598,7 @@ func newBackupJobHandler(w http.ResponseWriter, r *http.Request) {
 			id = rand.Int()
 		}
 		files := r.Form["files"]
+		files = modifyFileList(files)
 		if r.Form["create"][0] == "Create" {
 			defer http.Redirect(w, r, "/backupjob", http.StatusSeeOther)
 		} else {
@@ -711,6 +712,7 @@ func editBackupJobHandler(w http.ResponseWriter, r *http.Request) {
 		if jobIndexToEdit == -1 {
 			return
 		}
+		files = modifyFileList(files)
 		if r.Form["edit"][0] != "Save" {
 			defer http.Redirect(w, r, "/filebrowser?jobid="+strconv.Itoa(jobID), http.StatusSeeOther)
 		} else {
@@ -735,7 +737,9 @@ func editBackupJobHandler(w http.ResponseWriter, r *http.Request) {
 					} else {
 						msg.setSuccess("Removed File")
 					}
-
+					if len(configData.BackupJobs[jobIndexToEdit].Files) < 1 {
+						configData.BackupJobs[jobIndexToEdit].Files = append(configData.BackupJobs[jobIndexToEdit].Files, "")
+					}
 					return
 				}
 			}
@@ -804,52 +808,6 @@ func editBackupJobHandler(w http.ResponseWriter, r *http.Request) {
 
 		}
 	}
-}
-
-//fileBrowserHandler handles viewing the file tree
-func fileBrowserHandler(w http.ResponseWriter, r *http.Request) {
-	if !passwordCorrect {
-		http.Redirect(w, r, "/pw", http.StatusSeeOther)
-		return
-	}
-	r.ParseForm()
-	var directory string
-	var repo Repo
-	var job BackupJob
-	if r.Form["curDir"] != nil {
-		directory = strings.Replace(r.Form["curDir"][0], "\\\\", "\\", -1)
-	} else {
-		switch runtime.GOOS {
-		case "linux":
-			directory = filepath.Dir("/")
-		case "windows":
-			directory = filepath.Dir("C:\\")
-		}
-	}
-	if r.Form["new"] != nil && r.Form["new"][0] != "null" {
-		os.MkdirAll(directory+"\\"+r.Form["new"][0], 0777)
-	}
-	if r.Form["repoid"] != nil {
-		repoID, err := strconv.Atoi(r.Form["repoid"][0])
-		if err == nil {
-			repoPtr, err := getRepo(repoID)
-			if err == nil {
-				repo = *repoPtr
-			}
-		}
-	}
-	if r.Form["jobid"] != nil {
-		jobID, err := strconv.Atoi(r.Form["jobid"][0])
-		if err == nil {
-			jobPtr, err := getBackupJob(jobID)
-			if err == nil {
-				job = *jobPtr
-			}
-		}
-	}
-	files := readDirectory(directory)
-	data := &GuiData{Files: files, CurrentDirectory: directory, CurrentRepo: repo, CurrentBackupJob: job, Message: msg.get(), Config: configData}
-	filebrowserTemplate.Execute(w, data)
 }
 
 //forgetHandler deletes everything but the last n snapshots
@@ -1050,4 +1008,86 @@ func versionCheckHandler(w http.ResponseWriter, r *http.Request) {
 			msg.set("Newer version available")
 		}
 	}
+}
+
+//fileBrowserHandler handles viewing the file tree
+func fileBrowserHandler(w http.ResponseWriter, r *http.Request) {
+	if !passwordCorrect {
+		http.Redirect(w, r, "/pw", http.StatusSeeOther)
+		return
+	}
+	r.ParseForm()
+	var directory string
+	var repo Repo
+	var job BackupJob
+	if r.Form["curDir"] != nil {
+		directory = strings.Replace(r.Form["curDir"][0], "\\\\", "\\", -1)
+	} else {
+		switch runtime.GOOS {
+		case "linux":
+			directory = filepath.Dir("/")
+		case "windows":
+			directory = filepath.Dir("C:\\")
+		}
+	}
+	if r.Form["new"] != nil && r.Form["new"][0] != "null" {
+		os.MkdirAll(directory+"\\"+r.Form["new"][0], 0777)
+	}
+	if r.Form["repoid"] != nil {
+		repoID, err := strconv.Atoi(r.Form["repoid"][0])
+		if err == nil {
+			repoPtr, err := getRepo(repoID)
+			if err == nil {
+				repo = *repoPtr
+			}
+		}
+	}
+	if r.Form["jobid"] != nil {
+		jobID, err := strconv.Atoi(r.Form["jobid"][0])
+		if err == nil {
+			jobPtr, err := getBackupJob(jobID)
+			if err == nil {
+				job = *jobPtr
+			}
+		}
+	}
+	files := readDirectory(directory)
+	data := &GuiData{Files: files, CurrentDirectory: directory, CurrentRepo: repo, CurrentBackupJob: job, Message: msg.get(), Config: configData}
+	filebrowserTemplate.Execute(w, data)
+}
+
+func getDirectoryHandler(w http.ResponseWriter, r *http.Request) {
+	if !passwordCorrect {
+		http.Redirect(w, r, "/pw", http.StatusSeeOther)
+		return
+	}
+	r.ParseForm()
+	var directory string
+	var repo Repo
+	var job BackupJob
+	if r.Form["curDir"] == nil {
+		return
+	}
+	directory = filepath.Clean(r.Form["curDir"][0])
+	if r.Form["repoid"] != nil {
+		repoID, err := strconv.Atoi(r.Form["repoid"][0])
+		if err == nil {
+			repoPtr, err := getRepo(repoID)
+			if err == nil {
+				repo = *repoPtr
+			}
+		}
+	}
+	if r.Form["jobid"] != nil {
+		jobID, err := strconv.Atoi(r.Form["jobid"][0])
+		if err == nil {
+			jobPtr, err := getBackupJob(jobID)
+			if err == nil {
+				job = *jobPtr
+			}
+		}
+	}
+	files := readDirectory(directory)
+	data := &GuiData{Files: files, CurrentDirectory: directory, CurrentRepo: repo, CurrentBackupJob: job}
+	directoryListTemplate.Execute(w, data)
 }

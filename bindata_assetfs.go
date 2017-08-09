@@ -13,6 +13,7 @@
 // data/staticfiles/logo.png
 // data/staticfiles/style.css
 // data/templates/backupjob.html
+// data/templates/directorylist.html
 // data/templates/editbackupjob.html
 // data/templates/editrepository.html
 // data/templates/filebrowser.html
@@ -29,6 +30,7 @@
 // data/templates/snapshotfile.html
 // data/templates/snapshotlist.html
 // data/templates_german/backupjob.html
+// data/templates_german/directorylist.html
 // data/templates_german/editbackupjob.html
 // data/templates_german/editrepository.html
 // data/templates_german/filebrowser.html
@@ -291,6 +293,24 @@ func dataStaticfilesStyleCss() (*asset, error) {
 func dataTemplatesBackupjobHtml() (*asset, error) {
 	path := "C:\\Users\\lukas\\go\\src\\github.com\\eitea\\FuseNX\\data\\templates\\backupjob.html"
 	name := "data/templates/backupjob.html"
+	bytes, err := bindataRead(path, name)
+	if err != nil {
+		return nil, err
+	}
+
+	fi, err := os.Stat(path)
+	if err != nil {
+		err = fmt.Errorf("Error reading asset info %s at %s: %v", name, path, err)
+	}
+
+	a := &asset{bytes: bytes, info: fi}
+	return a, err
+}
+
+// dataTemplatesDirectorylistHtml reads file data from disk. It returns an error on failure.
+func dataTemplatesDirectorylistHtml() (*asset, error) {
+	path := "C:\\Users\\lukas\\go\\src\\github.com\\eitea\\FuseNX\\data\\templates\\directorylist.html"
+	name := "data/templates/directorylist.html"
 	bytes, err := bindataRead(path, name)
 	if err != nil {
 		return nil, err
@@ -579,6 +599,24 @@ func dataTemplatesSnapshotlistHtml() (*asset, error) {
 func dataTemplates_germanBackupjobHtml() (*asset, error) {
 	path := "C:\\Users\\lukas\\go\\src\\github.com\\eitea\\FuseNX\\data\\templates_german\\backupjob.html"
 	name := "data/templates_german/backupjob.html"
+	bytes, err := bindataRead(path, name)
+	if err != nil {
+		return nil, err
+	}
+
+	fi, err := os.Stat(path)
+	if err != nil {
+		err = fmt.Errorf("Error reading asset info %s at %s: %v", name, path, err)
+	}
+
+	a := &asset{bytes: bytes, info: fi}
+	return a, err
+}
+
+// dataTemplates_germanDirectorylistHtml reads file data from disk. It returns an error on failure.
+func dataTemplates_germanDirectorylistHtml() (*asset, error) {
+	path := "C:\\Users\\lukas\\go\\src\\github.com\\eitea\\FuseNX\\data\\templates_german\\directorylist.html"
+	name := "data/templates_german/directorylist.html"
 	bytes, err := bindataRead(path, name)
 	if err != nil {
 		return nil, err
@@ -928,6 +966,7 @@ var _bindata = map[string]func() (*asset, error){
 	"data/staticfiles/logo.png": dataStaticfilesLogoPng,
 	"data/staticfiles/style.css": dataStaticfilesStyleCss,
 	"data/templates/backupjob.html": dataTemplatesBackupjobHtml,
+	"data/templates/directorylist.html": dataTemplatesDirectorylistHtml,
 	"data/templates/editbackupjob.html": dataTemplatesEditbackupjobHtml,
 	"data/templates/editrepository.html": dataTemplatesEditrepositoryHtml,
 	"data/templates/filebrowser.html": dataTemplatesFilebrowserHtml,
@@ -944,6 +983,7 @@ var _bindata = map[string]func() (*asset, error){
 	"data/templates/snapshotfile.html": dataTemplatesSnapshotfileHtml,
 	"data/templates/snapshotlist.html": dataTemplatesSnapshotlistHtml,
 	"data/templates_german/backupjob.html": dataTemplates_germanBackupjobHtml,
+	"data/templates_german/directorylist.html": dataTemplates_germanDirectorylistHtml,
 	"data/templates_german/editbackupjob.html": dataTemplates_germanEditbackupjobHtml,
 	"data/templates_german/editrepository.html": dataTemplates_germanEditrepositoryHtml,
 	"data/templates_german/filebrowser.html": dataTemplates_germanFilebrowserHtml,
@@ -1028,6 +1068,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		}},
 		"templates": &bintree{nil, map[string]*bintree{
 			"backupjob.html": &bintree{dataTemplatesBackupjobHtml, map[string]*bintree{}},
+			"directorylist.html": &bintree{dataTemplatesDirectorylistHtml, map[string]*bintree{}},
 			"editbackupjob.html": &bintree{dataTemplatesEditbackupjobHtml, map[string]*bintree{}},
 			"editrepository.html": &bintree{dataTemplatesEditrepositoryHtml, map[string]*bintree{}},
 			"filebrowser.html": &bintree{dataTemplatesFilebrowserHtml, map[string]*bintree{}},
@@ -1046,6 +1087,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		}},
 		"templates_german": &bintree{nil, map[string]*bintree{
 			"backupjob.html": &bintree{dataTemplates_germanBackupjobHtml, map[string]*bintree{}},
+			"directorylist.html": &bintree{dataTemplates_germanDirectorylistHtml, map[string]*bintree{}},
 			"editbackupjob.html": &bintree{dataTemplates_germanEditbackupjobHtml, map[string]*bintree{}},
 			"editrepository.html": &bintree{dataTemplates_germanEditrepositoryHtml, map[string]*bintree{}},
 			"filebrowser.html": &bintree{dataTemplates_germanFilebrowserHtml, map[string]*bintree{}},

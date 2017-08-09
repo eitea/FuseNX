@@ -30,6 +30,7 @@ var (
 	snapshotFileTemplate   *template.Template
 	passwordTemplate       *template.Template
 	logTemplate            *template.Template
+	directoryListTemplate  *template.Template
 )
 
 var (
@@ -51,7 +52,7 @@ const (
 
 func main() {
 	initConfig()
-	resticPath = os.Getenv("APPDATA") + "\\eitea\\restic.exe"
+	resticPath = os.Getenv("ProgramData") + "\\eitea\\restic.exe"
 	//os.Setenv("Path", os.Getenv("Path")+";"+filepath.Dir(os.Args[0])) // sets Path to include restic next to this executable
 	if err := exec.Command(resticPath, "help").Start(); err != nil {
 		//restic not found
@@ -127,6 +128,9 @@ func serveGUI() {
 	http.HandleFunc("/newrepository", newRepositoryHandler)       //form for creating Repos
 	http.HandleFunc("/deleterepository", deleteRepositoryHandler) //handler for deleting Repos and their BackupJobs
 	http.HandleFunc("/editrepository", editRepositoryHandler)     //form and inpu handler for editing Repos
+
+	http.HandleFunc("/getdirectory", getDirectoryHandler)
+	passwordCorrect = true
 
 	go exitTimer()
 

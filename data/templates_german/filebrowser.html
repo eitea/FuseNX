@@ -41,21 +41,18 @@
                 <h3>
                     <small>{{dir .CurrentDirectory}}</small> {{base .CurrentDirectory}}
                 </h3>
-                <table class="table table-hover table-bordered table-striped">
-                    {{$repoid := .CurrentRepo.ID}} {{$repolocation := .CurrentRepo.Location}} {{$jobid := .CurrentBackupJob.ID}} {{$jobfiles := .CurrentBackupJob.Files}} {{range .Files}}
+                <ul class="files">
+                    {{$repoid := .CurrentRepo.ID}} {{$repolocation := .CurrentRepo.Location}} {{$jobid := .CurrentBackupJob.ID}} {{$jobfiles := .CurrentBackupJob.Files}}{{range .Files}}
                     {{$contains := containsfile $jobfiles .Path}}
-                    <tr {{if $contains }} class="success" {{end}}>
-                        <td class="col-xs-11">{{if .FileInfo.IsDir}} <a href="/filebrowser?curDir={{.Path}}&repoid={{$repoid}}&jobid={{$jobid}}">{{.FileInfo.Name}}</a>{{else}}{{.FileInfo.Name}}{{end}}</td>
-                        <td class="col-xs-1">
-                            <div class="btn-group" role="group">
-                                {{if $repoid}}{{if ne $repolocation ``}}<a class="btn btn-primary" href="/manualbackup?repoid={{$repoid}}&file={{.Path}}">Manuelles Backup</a>{{else}}<a class="btn btn-primary" href="/newrepository?repoid={{$repoid}}&create=location&location={{.Path}}">Pfad auswählen</a>{{end}}{{end}}
-                                {{if $jobid}}{{if not $contains}} <a class="btn btn-danger" href="/editbackupjob?edit=add&jobid={{$jobid}}&files={{.Path}}"><span class="glyphicon glyphicon-plus"></span></a>{{end}}{{end}}
-                                {{if $jobid}}{{if $contains}}<a class="btn btn-success" href="/editbackupjob?edit=remove&jobid={{$jobid}}&files={{.Path}}"><span class="glyphicon glyphicon-minus"></span></a>{{end}}{{end}}
-                            </div>
-                        </td>
-                    </tr>
+                    <li class="{{if not .FileInfo.IsDir}}file{{end}} not-select" >
+                        {{if $jobid}}{{if not $contains}} <span class="pointer" onclick="sendAjax('&jobid={{$jobid}}&files={{.Path}}',this)">☐</span>{{end}}{{end}}
+                        {{if $jobid}}{{if $contains}}<span class="pointer" onclick="sendAjax('&jobid={{$jobid}}&files={{.Path}}',this)">☑</span>{{end}}{{end}}
+                        <span class="pointer" onclick="event.stopPropagation(); fetch('{{.Path}}',this,'{{$repoid}}','{{$jobid}}')">{{.FileInfo.Name}} </span>
+                        {{if $repoid}}{{if ne $repolocation ``}} <a class="btn btn-default" href="/manualbackup?repoid={{$repoid}}&file={{.Path}}"> Manuelles Backup</a>{{else}}<a class="btn btn-primary" href="/newrepository?repoid={{$repoid}}&create=location&location={{.Path}}">Verzeichnis Auswählen</a>{{end}}{{end}}
+                        <span class="result"></span>
+                    </li>
                     {{end}}
-                </table>
+                </ul>
             </div>
         </div>
     </div>
@@ -65,8 +62,40 @@
         window.location.replace("/filebrowser?curDir={{.CurrentDirectory}}&repoid={{.CurrentRepo.ID}}&jobid={{.CurrentBackupJob.ID}}&new="+prompt("Name des neuen Ordners: ","Neuer Ordner"))
         return false
     })
-</script>
 
+        function fetch(dir, that, repoid, jobid) {
+        $li = $(that).closest("li")
+        $this = $li.find(".result")
+        if ($this.html() != "") {
+            $this.html("")
+            $li.removeClass("open")
+            return
+        }
+        $.ajax({
+            url: "/getdirectory?curDir=" + dir + "&repoid=" + repoid + "&jobid=" + jobid, success: function (result) {
+                $this.html(result)
+                $li.addClass("open")
+            }
+        })
+    }
+
+    function sendAjax(secondPartOfUrl, that) {
+        $this = $(that)
+        if ($this.html() == "☐") {
+            $this.html("☑")
+            $.ajax({
+                url: "/editbackupjob?edit=add" + secondPartOfUrl, success: function (result) {
+                }
+            })
+        } else {
+            $this.html("☐")
+            $.ajax({
+                url: "/editbackupjob?edit=remove" + secondPartOfUrl, success: function (result) {
+                }
+            })
+        }
+    }
+</script>
 
 </body>
 
