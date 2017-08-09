@@ -51,9 +51,16 @@ const (
 )
 
 func main() {
+	// Testing for admin permission
+	_, err := exec.Command("schtasks", "/create", "/tn", "Eitea FuseNX Test Task", "/tr", "cmd", "/sc", "weekly", "/sd", time.Now().Format("02/01/2006"), "/st", time.Now().Add(-5*time.Minute).Format("15:04"), "/ru", "SYSTEM", "/f").CombinedOutput()
+	exec.Command("schtasks", "/delete", "/tn", "Eitea FuseNX Test Task", "/f").CombinedOutput()
+	isAdmin = err == nil
+	if isAdmin {
+		resticPath = os.Getenv("ProgramData") + "\\eitea\\restic.exe"
+	} else {
+		resticPath = os.Getenv("AppData") + "\\eitea\\restic.exe"
+	}
 	initConfig()
-	resticPath = os.Getenv("ProgramData") + "\\eitea\\restic.exe"
-	//os.Setenv("Path", os.Getenv("Path")+";"+filepath.Dir(os.Args[0])) // sets Path to include restic next to this executable
 	if err := exec.Command(resticPath, "help").Start(); err != nil {
 		//restic not found
 		os.MkdirAll(filepath.Dir(resticPath), 0777)
@@ -89,12 +96,6 @@ func serveGUI() {
 			fmt.Println("Besuchen Sie http://localhost/gui um das GUI zu sehen (automatischer Start des Browsers in den Einstellungen aktivierbar)")
 		}
 	}
-	go func() { // Testing for admin permission
-		_, err := exec.Command("schtasks", "/create", "/tn", "Eitea FuseNX Test Task", "/tr", "cmd", "/sc", "weekly", "/sd", time.Now().Format("02/01/2006"), "/st", time.Now().Add(-5*time.Minute).Format("15:04"), "/ru", "SYSTEM", "/f").CombinedOutput()
-		exec.Command("schtasks", "/delete", "/tn", "Eitea FuseNX Test Task", "/f").CombinedOutput()
-		isAdmin = err == nil
-	}()
-
 	parseAllTemplates()
 
 	http.HandleFunc("/", indexHandler)            //start page

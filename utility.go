@@ -237,7 +237,11 @@ func encrypt(plaintext, key []byte) []byte {
 
 //initConfig creates a config file at first program start and loads all Repos an BackupJobs
 func initConfig() {
-	configFilePath = os.Getenv("ProgramData") + "\\eitea\\backup.conf"
+	if isAdmin {
+		configFilePath = os.Getenv("ProgramData") + "\\eitea\\backup.conf"
+	} else {
+		configFilePath = os.Getenv("AppData") + "\\eitea\\backup.conf"
+	}
 	if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
 		os.MkdirAll(filepath.Dir(configFilePath), 0777)
 		configData = ConfigData{Settings: Setting{AutomaticPageReload: true, AutomaticScroll: true, OpenBrowser: true, ShowMessages: true, Tips: true}}
