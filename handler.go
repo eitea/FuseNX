@@ -948,7 +948,7 @@ func passwordHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/gui", http.StatusSeeOther)
 	}
 	if r.Form["password"] == nil {
-		data := &GuiData{Config: configData, Message: msg.get()}
+		data := &GuiData{Config: configData, Message: msg.get(), IsAdmin: isAdmin}
 		passwordTemplate.Execute(w, data)
 	} else {
 		if configData.Settings.Password != "" || r.Form["password"][0] == r.Form["password2"][0] {
@@ -968,8 +968,7 @@ func passwordHandler(w http.ResponseWriter, r *http.Request) {
 			} else {
 				msg.setError("Wrong password")
 			}
-
-			data := &GuiData{Config: configData, Message: msg.get()}
+			data := &GuiData{Config: configData, Message: msg.get(), IsAdmin: isAdmin}
 			passwordTemplate.Execute(w, data)
 		}
 	}

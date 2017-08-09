@@ -378,3 +378,11 @@ func modifyFileList(s []string) []string {
 	}
 	return r
 }
+
+func checkForAdmin() bool {
+	_, err := os.Open("\\\\.\\PHYSICALDRIVE0")
+	if err != nil {
+		return false
+	}
+	return true
+}

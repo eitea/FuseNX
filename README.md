@@ -5,9 +5,13 @@ BackupGUI
 
 You need the [go-bindata-assetfs](https://github.com/elazarl/go-bindata-assetfs) to create the bindata file.
 
-    go-bindata-assetfs data/...
-    go build
+```bash
+go-bindata-assetfs data/...
+go build
+```
 
-You can rebuild the syso file, but it's usually not necessary
+You can rebuild the syso file, but it's usually not necessary ([rsrc](https://github.com/akavel/rsrc))
 
-    rsrc -manifest FuseNX.exe.manifest -ico icon.ico -o FuseNX.syso
+```bash
+rsrc -manifest FuseNX.exe.manifest -ico icon.ico -o FuseNX.syso
+```

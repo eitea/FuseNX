@@ -36,6 +36,7 @@ type GuiData struct {
 	SnapshotFiles     []string
 	Import            bool
 	Version           float64
+	IsAdmin           bool
 }
 
 //FileInfoWithPath contains a FileInfo and a full path to the file
