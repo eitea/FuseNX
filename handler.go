@@ -357,11 +357,7 @@ func deleteSnapshotHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	setActiveRepoEnvironmentVariables(repo.ID)
-	if _, err := os.Stat(repo.Location + "/snapshots/" + snapshotID); !os.IsNotExist(err) {
-		os.Remove(repo.Location + "/snapshots/" + snapshotID)
-	}
-	pruneCmd := exec.Command(resticPath, "-r", repo.Location, "prune")
-	pruneCmd.Run()
+	exec.Command(resticPath, "-r", repo.Location, "forget", snapshotID, "--prune").Run()
 }
 
 //deleteBackupJobHandler deletes a BackupJob

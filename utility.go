@@ -128,9 +128,21 @@ func readDirectory(directory string) []FileInfoWithPath {
 	}
 	fileinfo := make([]FileInfoWithPath, len(files))
 	for i := 0; i < len(files); i++ {
-		fileinfo[i] = FileInfoWithPath{FileInfo: files[i], Path: directory + "\\" + files[i].Name()}
+		fileinfo[i] = FileInfoWithPath{FileInfo: files[i], Path: directory + "\\" + files[i].Name(), WritePermission: hasWritePermission(directory + "\\" + files[i].Name())}
 	}
 	return fileinfo
+}
+
+func hasWritePermission(path string) bool {
+	file, err := os.OpenFile(path, os.O_WRONLY, 0666)
+	if err != nil {
+		if os.IsPermission(err) {
+			fmt.Println(err)
+			return false
+		}
+	}
+	file.Close()
+	return true
 }
 
 //containsFile looks for a path in a slice

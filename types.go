@@ -41,8 +41,9 @@ type GuiData struct {
 
 //FileInfoWithPath contains a FileInfo and a full path to the file
 type FileInfoWithPath struct {
-	FileInfo os.FileInfo
-	Path     string
+	FileInfo        os.FileInfo
+	Path            string
+	WritePermission bool
 }
 
 //Snapshot contains information about one particular restic snapshot

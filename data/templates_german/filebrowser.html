@@ -47,7 +47,7 @@
                     <li class="{{if not .FileInfo.IsDir}}file{{end}} not-select" >
                         {{if $jobid}}{{if not $contains}} <span class="pointer" onclick="sendAjax('&jobid={{$jobid}}&files={{.Path}}',this)">☐</span>{{end}}{{end}}
                         {{if $jobid}}{{if $contains}}<span class="pointer" onclick="sendAjax('&jobid={{$jobid}}&files={{.Path}}',this)">☑</span>{{end}}{{end}}
-                        <span class="pointer" onclick="event.stopPropagation(); fetch('{{.Path}}',this,'{{$repoid}}','{{$jobid}}')">{{.FileInfo.Name}} </span>
+                        <span class="pointer {{if not .WritePermission}}text-danger{{end}}" onclick="event.stopPropagation(); fetch('{{.Path}}',this,'{{$repoid}}','{{$jobid}}')">{{.FileInfo.Name}} </span>
                         {{if $repoid}}{{if ne $repolocation ``}} <a class="btn btn-default" href="/manualbackup?repoid={{$repoid}}&file={{.Path}}"> Manuelles Backup</a>{{else}}<a class="btn btn-primary" href="/newrepository?repoid={{$repoid}}&create=location&location={{.Path}}">Verzeichnis Auswählen</a>{{end}}{{end}}
                         <span class="result"></span>
                     </li>
