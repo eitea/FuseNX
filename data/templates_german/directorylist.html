@@ -7,8 +7,7 @@
                         {{if $jobid}}{{if $contains}}<span class="pointer" onclick="sendAjax('&jobid={{$jobid}}&files={{.Path}}',this)">☑</span>{{end}}{{end}}
                         <span class="pointer {{if not .WritePermission}}text-danger{{end}}" onclick="event.stopPropagation(); fetch('{{.Path}}',this,'{{$repoid}}','{{$jobid}}')">{{.FileInfo.Name}} </span>
                         {{if and .FileInfo.IsDir .WritePermission}}<span class="glyphicon glyphicon-plus-sign pointer padding-left"  onclick="sendRawAjaxAndReload('/filebrowser?curDir={{.Path}}&repoid={{$repoid}}&jobid={{$jobid}}&new='+prompt('Name des neuen Ordners: ','Neuer Ordner'), '{{.Path}}',this,'{{$repoid}}','{{$jobid}}')"><span class="glyphicon glyphicon-plus-sign"></span></span>  {{end}}                      {{if $repoid}}{{if ne $repolocation ``}} <a class="btn btn-default" href="/manualbackup?repoid={{$repoid}}&file={{.Path}}"> Manuelles Backup</a>{{else}}
-                        <a
-                            class="btn btn-primary" href="/newrepository?repoid={{$repoid}}&create=location&location={{.Path}}">Verzeichnis Auswählen</a>{{end}}{{end}}
+                        {{if .WritePermission}}<a class="btn btn-primary" href="/newrepository?repoid={{$repoid}}&create=location&location={{.Path}}">Verzeichnis Auswählen</a>{{end}}{{end}}{{end}}
                             <span class="result"></span>
                     </li>
                     {{end}}
