@@ -925,6 +925,7 @@ func passwordHandler(w http.ResponseWriter, r *http.Request) {
 		if configData.Settings.Language == "" {
 			configData.Settings.Language = "english"
 		}
+		writeToConfig()
 		parseAllTemplates()
 	}
 	if r.Form["logout"] != nil {
