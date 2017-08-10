@@ -133,11 +133,11 @@ func readDirectory(directory string) []FileInfoWithPath {
 	return fileinfo
 }
 
+//hasWritePermission checks the file permission
 func hasWritePermission(path string) bool {
 	file, err := os.OpenFile(path, os.O_WRONLY, 0666)
 	if err != nil {
 		if os.IsPermission(err) {
-			fmt.Println(err)
 			return false
 		}
 	}
