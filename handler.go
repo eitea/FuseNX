@@ -1106,3 +1106,30 @@ func getDirectoryHandler(w http.ResponseWriter, r *http.Request) {
 	data := &GuiData{Files: files, CurrentDirectory: directory, CurrentRepo: repo, CurrentBackupJob: job}
 	directoryListTemplate.Execute(w, data)
 }
+
+func checkHandler(w http.ResponseWriter, r *http.Request) {
+	if !passwordCorrect {
+		http.Redirect(w, r, "/pw", http.StatusSeeOther)
+		return
+	}
+	msg.setError("Check failed")
+	r.ParseForm()
+	repoID, err := strconv.Atoi(r.Form["repoid"][0])
+	defer http.Redirect(w, r, "/repository", http.StatusSeeOther)
+	if err != nil {
+		return
+	}
+	repo, err := getRepo(repoID)
+	if err != nil {
+		return
+	}
+	setActiveRepoEnvironmentVariables(repo.ID)
+	checkCmd := exec.Command(resticPath, "-r", repo.Location, "check")
+	output, err := checkCmd.CombinedOutput()
+	if err != nil {
+		msg.setError(string(output))
+		return
+	}
+	msg.setSuccess(string(output))
+	fmt.Println(string(output))
+}

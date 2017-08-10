@@ -132,6 +132,7 @@ func serveGUI() {
 	http.HandleFunc("/getdirectory", getDirectoryHandler) //outputs a list of directories and actions
 	http.HandleFunc("/manualbackup", manualBackupHandler) //back up a file from filebrowser
 	http.HandleFunc("/forget", forgetHandler)             //restics forget command
+	http.HandleFunc("/check", checkHandler)               //checks the repository
 
 	http.HandleFunc("/snapshot", snapshotListHandler)         //list Snapshots
 	http.HandleFunc("/deletesnapshot", deleteSnapshotHandler) //handler for deleting snapshots

@@ -33,9 +33,10 @@
                         <td>{{.Type}}</td>
                         <td>
                             <div class="btn-group" role="group">
-                                <a class="btn btn-primary" href="/snapshot?id={{.ID}}" title="Snapshots auflisten"><span class="glyphicon glyphicon-list"></span></a>
-                                <button class="btn btn-default" onclick="restoreLatest('{{.ID}}')">Neuesten Snapshots wiederherstellen</button>
+                                <button class="btn btn-primary" onclick="restoreLatest('{{.ID}}')">Neuesten Snapshots wiederherstellen</button>
                                 <a class="btn btn-default" href="/filebrowser?repoid={{.ID}}">{{if ne .Location ``}}Manuelles Backup{{else}}Pfad auswählen{{end}}</a>
+                                <a class="btn btn-default" href="/check?repoid={{.ID}}" title="Bearbeiten">Prüfen</a>
+                                <a class="btn btn-default" href="/snapshot?id={{.ID}}" title="Snapshots auflisten"><span class="glyphicon glyphicon-list"></span></a>
                                 <a class="btn btn-default" href="/editrepository?repoid={{.ID}}" title="Bearbeiten"><span class="glyphicon glyphicon-pencil"></span></a>
                                 <a title="Archiv von FuseNX entfernen (löschen sie den Ordner, um alle Daten zu vernichten)" href="/deleterepository?repoid={{.ID}}"
                                     class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></a>
