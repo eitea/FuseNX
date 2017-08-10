@@ -1,0 +1,6 @@
+@echo off
+title Building FuseNX
+rsrc -manifest FuseNX.exe.manifest -ico icon.ico -o FuseNX.syso
+go-bindata-assetfs data/...
+go build
+go-bindata-assetfs -debug data/...
