@@ -1,13 +1,15 @@
 <ul class="files">
-    {{$repoid := .CurrentRepo.ID}} {{$repolocation := .CurrentRepo.Location}} {{$jobid := .CurrentBackupJob.ID}} {{$jobfiles := .CurrentBackupJob.Files}}{{range .Files}}
-    {{$contains := containsfile $jobfiles .Path}}
-
-    <li class="{{if not .FileInfo.IsDir}}file{{end}} not-select" >
+    {{$repoid := .CurrentRepo.ID}} {{$repolocation := .CurrentRepo.Location}} {{$jobid := .CurrentBackupJob.ID}} 
+    {{$jobfiles := .CurrentBackupJob.Files}}
+    {{range .Files}} {{$contains := containsfile $jobfiles .Path}}
+    <li class="{{if not .FileInfo.IsDir}}file{{end}} not-select">
         {{if $jobid}}{{if not $contains}} <span class="pointer" onclick="sendAjax('&jobid={{$jobid}}&files={{.Path}}',this)">☐</span>{{end}}{{end}}
         {{if $jobid}}{{if $contains}}<span class="pointer" onclick="sendAjax('&jobid={{$jobid}}&files={{.Path}}',this)">☑</span>{{end}}{{end}}
-        <span class="pointer" onclick="event.stopPropagation(); fetch('{{.Path}}',this,'{{$repoid}}','{{$jobid}}')">{{.FileInfo.Name}} </span>
-        {{if $repoid}}{{if ne $repolocation ``}} <a class="btn btn-default" href="/manualbackup?repoid={{$repoid}}&file={{.Path}}"> Manual Backup</a>{{else}}<a class="btn btn-primary" href="/newrepository?repoid={{$repoid}}&create=location&location={{.Path}}">Choose Location</a>{{end}}{{end}}
-        <span class="result"></span>
+        <span class="pointer {{if not .WritePermission}}text-danger{{end}}" onclick="event.stopPropagation(); fetch('{{.Path}}',this,'{{$repoid}}','{{$jobid}}')">{{.FileInfo.Name}} </span>
+        {{if and .FileInfo.IsDir .WritePermission}}<span class="glyphicon glyphicon-plus-sign pointer padding-left" onclick="sendRawAjaxAndReload('/filebrowser?curDir={{.Path}}&repoid={{$repoid}}&jobid={{$jobid}}&new='+prompt('New folder name: ','New Folder'), '{{.Path}}',this,'{{$repoid}}','{{$jobid}}')"><span class="glyphicon glyphicon-plus-sign"></span></span>    {{end}}                    {{if $repoid}}{{if ne $repolocation ``}} <a class="btn btn-default" href="/manualbackup?repoid={{$repoid}}&file={{.Path}}"> Manual Backup</a>{{else}}
+        <a
+            class="btn btn-primary" href="/newrepository?repoid={{$repoid}}&create=location&location={{.Path}}">Choose Directory</a>{{end}}{{end}}
+            <span class="result"></span>
     </li>
     {{end}}
 </ul>

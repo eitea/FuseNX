@@ -133,3 +133,7 @@ ul.files li.file::before, ul.files li.file:hover::before {
     -ms-user-select: none;
     user-select: none;
 }
+
+.padding-left{
+    margin-left: 20px;
+}

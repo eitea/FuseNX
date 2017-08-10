@@ -13,10 +13,9 @@
             <div class="col-xs-12">
                 <h1 class="page-header">Durchsuchen</h1>
                 {{if .CurrentBackupJob.ID}}
-                <a class="btn btn-primary" href="/editbackupjob?jobid={{.CurrentBackupJob.ID}}">Zurück</a><br><br>
+                <a class="btn btn-primary" href="/editbackupjob?jobid={{.CurrentBackupJob.ID}}">Zurück</a><br><br> 
                 {{else if .CurrentRepo.ID}}
-                <a class="btn btn-primary" href="/repository">Back</a><br><br>                
-                {{end}}
+                <a class="btn btn-primary" href="/repository">Zurück</a><br><br> {{end}}
                 <form class="form form-inline" autocomplete="off">
                     <input type="hidden" name="repoid" value="{{.CurrentRepo.ID}}">
                     <input type="hidden" name="jobid" value="{{.CurrentBackupJob.ID}}">
@@ -42,60 +41,79 @@
                     <small>{{dir .CurrentDirectory}}</small> {{base .CurrentDirectory}}
                 </h3>
                 <ul class="files">
-                    {{$repoid := .CurrentRepo.ID}} {{$repolocation := .CurrentRepo.Location}} {{$jobid := .CurrentBackupJob.ID}} {{$jobfiles := .CurrentBackupJob.Files}}{{range .Files}}
-                    {{$contains := containsfile $jobfiles .Path}}
-                    <li class="{{if not .FileInfo.IsDir}}file{{end}} not-select" >
+                    {{$repoid := .CurrentRepo.ID}} {{$repolocation := .CurrentRepo.Location}} {{$jobid := .CurrentBackupJob.ID}} 
+                    {{$jobfiles := .CurrentBackupJob.Files}}
+                    {{range .Files}} {{$contains := containsfile $jobfiles .Path}}
+                    <li class="{{if not .FileInfo.IsDir}}file{{end}} not-select">
                         {{if $jobid}}{{if not $contains}} <span class="pointer" onclick="sendAjax('&jobid={{$jobid}}&files={{.Path}}',this)">☐</span>{{end}}{{end}}
                         {{if $jobid}}{{if $contains}}<span class="pointer" onclick="sendAjax('&jobid={{$jobid}}&files={{.Path}}',this)">☑</span>{{end}}{{end}}
                         <span class="pointer {{if not .WritePermission}}text-danger{{end}}" onclick="event.stopPropagation(); fetch('{{.Path}}',this,'{{$repoid}}','{{$jobid}}')">{{.FileInfo.Name}} </span>
-                        {{if $repoid}}{{if ne $repolocation ``}} <a class="btn btn-default" href="/manualbackup?repoid={{$repoid}}&file={{.Path}}"> Manuelles Backup</a>{{else}}<a class="btn btn-primary" href="/newrepository?repoid={{$repoid}}&create=location&location={{.Path}}">Verzeichnis Auswählen</a>{{end}}{{end}}
-                        <span class="result"></span>
+                        {{if and .FileInfo.IsDir .WritePermission}}<span class="glyphicon glyphicon-plus-sign pointer padding-left" onclick="sendRawAjaxAndReload('/filebrowser?curDir={{.Path}}&repoid={{$repoid}}&jobid={{$jobid}}&new='+prompt('Name des neuen Ordners: ','Neuer Ordner'), '{{.Path}}',this,'{{$repoid}}','{{$jobid}}')"></span>   {{end}}                     {{if $repoid}}{{if ne $repolocation ``}} <a class="btn btn-default" href="/manualbackup?repoid={{$repoid}}&file={{.Path}}"> Manuelles Backup</a>{{else}}
+                        <a
+                            class="btn btn-primary" href="/newrepository?repoid={{$repoid}}&create=location&location={{.Path}}">Verzeichnis Auswählen</a>{{end}}{{end}}
+                            <span class="result"></span>
                     </li>
                     {{end}}
                 </ul>
             </div>
         </div>
     </div>
-<script>
-    $("#new").click(function(e){
-        e.preventDefault()
-        window.location.replace("/filebrowser?curDir={{.CurrentDirectory}}&repoid={{.CurrentRepo.ID}}&jobid={{.CurrentBackupJob.ID}}&new="+prompt("Name des neuen Ordners: ","Neuer Ordner"))
-        return false
-    })
+    <script>
+        $("#new").click(function (e) {
+            e.preventDefault()
+            window.location.replace("/filebrowser?curDir={{.CurrentDirectory}}&repoid={{.CurrentRepo.ID}}&jobid={{.CurrentBackupJob.ID}}&new=" + prompt("Name des neuen Ordners: ", "Neuer Ordner"))
+            return false
+        })
 
         function fetch(dir, that, repoid, jobid) {
-        $li = $(that).closest("li")
-        $this = $li.find(".result")
-        if ($this.html() != "") {
-            $this.html("")
-            $li.removeClass("open")
-            return
-        }
-        $.ajax({
-            url: "/getdirectory?curDir=" + dir + "&repoid=" + repoid + "&jobid=" + jobid, success: function (result) {
-                $this.html(result)
-                $li.addClass("open")
+            $li = $(that).closest("li")
+            $this = $li.find(".result")
+            if ($this.html() != "") {
+                $this.html("")
+                $li.removeClass("open")
+                return
             }
-        })
-    }
-
-    function sendAjax(secondPartOfUrl, that) {
-        $this = $(that)
-        if ($this.html() == "☐") {
-            $this.html("☑")
             $.ajax({
-                url: "/editbackupjob?edit=add" + secondPartOfUrl, success: function (result) {
-                }
-            })
-        } else {
-            $this.html("☐")
-            $.ajax({
-                url: "/editbackupjob?edit=remove" + secondPartOfUrl, success: function (result) {
+                url: "/getdirectory?curDir=" + dir + "&repoid=" + repoid + "&jobid=" + jobid, success: function (result) {
+                    $this.html(result)
+                    $li.addClass("open")
                 }
             })
         }
-    }
-</script>
+
+        function sendAjax(secondPartOfUrl, that) {
+            $this = $(that)
+            if ($this.html() == "☐") {
+                $this.html("☑")
+                $.ajax({
+                    url: "/editbackupjob?edit=add" + secondPartOfUrl, success: function (result) {
+                    }
+                })
+            } else {
+                $this.html("☐")
+                $.ajax({
+                    url: "/editbackupjob?edit=remove" + secondPartOfUrl, success: function (result) {
+                    }
+                })
+            }
+        }
+
+            function sendRawAjaxAndReload(url,dir,that, repoid,jobid) {
+                $.ajax({
+                    url: url, success: function (result) {
+                        $li = $(that).closest("li")
+                        $this = $li.find(".result")
+                        $.ajax({
+                            url: "/getdirectory?curDir=" + dir + "&repoid=" + repoid + "&jobid=" + jobid, success: function (result) {
+                                $this.html(result)
+                                $li.addClass("open")
+                            }
+                        })
+                    }
+                })
+            }
+
+        </script>
 
 </body>
 
