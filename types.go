@@ -79,6 +79,7 @@ type BackupJob struct {
 	Scheduled           bool
 	MailError           bool //send email when error occurs
 	MailSuccess         bool //send email when backup successful
+	running             bool
 }
 
 //WeekSchedule represents the weekly trigger in schtasks

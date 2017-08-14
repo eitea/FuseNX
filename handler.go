@@ -296,11 +296,29 @@ func executeBackupHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
+	if backupJob.running {
+		if configData.Settings.Language == "german" {
+			msg.setError("Diese Aufgabe konnte nicht gestartet werden, da sie schon läuft")
+		} else {
+			msg.setError("Backup Job already running")
+		}
+		return
+	}
+	if len(backupJob.Files) == 0 || backupJob.Files[0] == "" {
+		if configData.Settings.Language == "german" {
+			msg.setError("Diese Aufgabe konnte nicht gestartet werden, da sie keine Dateien enthält")
+		} else {
+			msg.setError("No files selected")
+		}
+		return
+	}
 	setActiveRepoEnvironmentVariables(repo.ID)
 	backupCmd := exec.Command(resticPath, "-r", repo.Location, "backup")
 	backupCmd.Args = append(backupCmd.Args, backupJob.Files...)
+	setBackupJobRunning(true, jobID)
 	go func() {
 		output, err := backupCmd.Output()
+		setBackupJobRunning(false, jobID)
 		if err != nil {
 			appendLog(jobID, false, "[Manual] Error: "+string(output)+" ("+err.Error()+")")
 		} else {
@@ -410,6 +428,14 @@ func deleteRepositoryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	//delete all BackupJobs for this Repo
 	for _, job := range configData.BackupJobs {
+		if job.running {
+			if configData.Settings.Language == "german" {
+				msg.setError("eine Backup Aufgabe wird noch ausgeführt")
+			} else {
+				msg.setError("a Backup Job still running")
+			}
+			return
+		}
 		if job.RepoID == repoID {
 			deleteBackupJob(job.ID)
 		}
@@ -957,7 +983,6 @@ func passwordHandler(w http.ResponseWriter, r *http.Request) {
 			} else {
 				msg.set("Welcome")
 			}
-
 			http.Redirect(w, r, "/gui", http.StatusSeeOther)
 		} else {
 			if configData.Settings.Language == "german" {
@@ -1045,12 +1070,14 @@ func fileBrowserHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Form["new"] != nil && r.Form["new"][0] != "null" {
 		os.MkdirAll(directory+"\\"+r.Form["new"][0], 0777)
 	}
+	var repoOrJobExists bool
 	if r.Form["repoid"] != nil {
 		repoID, err := strconv.Atoi(r.Form["repoid"][0])
 		if err == nil {
 			repoPtr, err := getRepo(repoID)
 			if err == nil {
 				repo = *repoPtr
+				repoOrJobExists = true
 			}
 		}
 	}
@@ -1060,8 +1087,18 @@ func fileBrowserHandler(w http.ResponseWriter, r *http.Request) {
 			jobPtr, err := getBackupJob(jobID)
 			if err == nil {
 				job = *jobPtr
+				repoOrJobExists = true
 			}
 		}
+	}
+	if !repoOrJobExists {
+		if configData.Settings.Language == "german" {
+			msg.setError("Kein Archiv oder Backup Aufgabe ausgewählt")
+		} else {
+			msg.setError("No Repository or Backup Job selected")
+		}
+		http.Redirect(w, r, "/gui", http.StatusSeeOther)
+		return
 	}
 	files := readDirectory(directory)
 	data := &GuiData{Files: files, CurrentDirectory: directory, CurrentRepo: repo, CurrentBackupJob: job, Message: msg.get(), Config: configData}

@@ -33,7 +33,7 @@
 <script>
     //{{if .Config.Settings.Tips}}
     $(document).ready(function () { //initializing tooltips
-        $('[title]').tooltip();
+        $('[title]').tooltip({container: 'body'});
     });
     //{{end}}
     //{{if .Config.Settings.AutomaticPageReload}}

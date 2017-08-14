@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Neues Archiv erstellen</title>
+    <title>{{if not .Import}}Neues Archiv erstellen{{else}}Archiv Importieren{{end}}</title>
     {{template "imports"}}
 </head>
 
@@ -11,7 +11,7 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <h1 class="page-header">Neues Archiv erstellen</h1>
+                <h1 class="page-header">{{if not .Import}}Neues Archiv erstellen{{else}}Archiv Importieren{{end}}</h1>
                 <form action="/newrepository" class="form-horizontal" autocomplete="off">
                     {{if .Import}}<input type="hidden" value="true" name="import">{{end}}
                     <div class="form-group">

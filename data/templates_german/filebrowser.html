@@ -15,7 +15,10 @@
                 {{if .CurrentBackupJob.ID}}
                 <a class="btn btn-primary" href="/editbackupjob?jobid={{.CurrentBackupJob.ID}}">Zurück</a><br><br> 
                 {{else if .CurrentRepo.ID}}
-                <a class="btn btn-primary" href="/repository">Zurück</a><br><br> {{end}}
+                <a class="btn btn-primary" href="/repository">Zurück</a><br><br> 
+                {{else}}
+                <a class="btn btn-primary" href="/gui">Start</a><br><br>              
+                {{end}}
                 <form class="form form-inline" autocomplete="off">
                     <input type="hidden" name="repoid" value="{{.CurrentRepo.ID}}">
                     <input type="hidden" name="jobid" value="{{.CurrentBackupJob.ID}}">

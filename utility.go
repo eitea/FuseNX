@@ -398,3 +398,18 @@ func checkForAdmin() bool {
 	}
 	return true
 }
+
+func setBackupJobRunning(running bool, jobID int) {
+	jobIndex := -1
+	for index, job := range configData.BackupJobs {
+		if jobID == job.ID {
+			jobIndex = index
+			break
+		}
+	}
+	if jobIndex == -1 {
+		msg.setError("Job does not exist")
+		return
+	}
+	configData.BackupJobs[jobIndex].running = running
+}

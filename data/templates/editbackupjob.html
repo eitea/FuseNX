@@ -129,6 +129,12 @@
                 $("#repeat").hide()
             }
         })
+
+        $('input[name="interval"]').change(function(){
+            if($(this).val() == ""){
+                $(this).val(1)
+            }
+        })
     </script>
 </body>
 
