@@ -19,11 +19,13 @@ package main
 import (
 	"errors"
 	"io/ioutil"
+	"math/rand"
 	"net/smtp"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"time"
 )
 
 //performScheduledBackup performs a Backup Job when invoked by Task Scheduler
@@ -132,4 +134,40 @@ func sendMail(body, subject string) {
 			msg.set("Message sent")
 		}
 	}
+}
+
+func addJobCmd() { // fusenx add <name> <repoid> <2006-01-02T15:04> <scheduled> <mailerror> <mailsuccess> <weekinterval> <mon> <tue> <wed> <thu> <fri> <sat> <sun> <files...>
+	name := os.Args[2]
+	id := rand.Int()
+	for getBackupJobName(id) != "" {
+		id = rand.Int()
+	}
+	repoID, _ := strconv.Atoi(os.Args[3])
+	start, _ := time.Parse("2006-01-02T15:04", os.Args[4])
+	scheduled := os.Args[5] == "true"
+	mailerror := os.Args[6] == "true"
+	mailsuccess := os.Args[7] == "true"
+	interval, _ := strconv.Atoi(os.Args[8])
+	weeks := WeekSchedule{
+		Interval: interval,
+		MON:      os.Args[9] == "true",
+		TUE:      os.Args[10] == "true",
+		WED:      os.Args[11] == "true",
+		THU:      os.Args[12] == "true",
+		FRI:      os.Args[13] == "true",
+		SAT:      os.Args[14] == "true",
+		SUN:      os.Args[15] == "true",
+	}
+	files := os.Args[16:]
+	for i := 0; i < len(files); i++ {
+		files[i] = filepath.Clean(files[i])
+	}
+	readFromConfig()
+	configData.BackupJobs = append(configData.BackupJobs, BackupJob{Name: name, Files: files, ID: id, Weeks: weeks, RepoID: repoID, Start: start, Scheduled: scheduled, MailError: mailerror, MailSuccess: mailsuccess})
+	writeToConfig()
+	err := createScheduledTask(configData.BackupJobs[len(configData.BackupJobs)-1])
+	if err != nil {
+		os.Exit(1)
+	}
+	os.Exit(0)
 }

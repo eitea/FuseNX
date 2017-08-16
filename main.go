@@ -83,10 +83,12 @@ func main() {
 		os.MkdirAll(filepath.Dir(resticPath), 0777)
 		ioutil.WriteFile(resticPath, MustAsset("data/bin/restic.exe"), 0777)
 	}
-	if len(os.Args) > 2 { // invoked by Windows Task Scheduler
+	if len(os.Args) > 1 { // invoked by Windows Task Scheduler
 		if os.Args[1] == "job" || os.Args[1] == "-job" || os.Args[1] == "/job" {
 			os.Chdir(filepath.Dir(os.Args[0]))
 			performScheduledBackup()
+		} else if os.Args[1] == "add" || os.Args[1] == "-add" || os.Args[1] == "/add" {
+			addJobCmd()
 		}
 		os.Exit(0)
 	}
