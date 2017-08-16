@@ -87,8 +87,10 @@ func main() {
 		if os.Args[1] == "job" || os.Args[1] == "-job" || os.Args[1] == "/job" {
 			os.Chdir(filepath.Dir(os.Args[0]))
 			performScheduledBackup()
-		} else if os.Args[1] == "add" || os.Args[1] == "-add" || os.Args[1] == "/add" {
+		} else if os.Args[1] == "add" {
 			addJobCmd()
+		} else if os.Args[1] == "repo" {
+			editRepoCmd() //creates or edits repo
 		}
 		os.Exit(0)
 	}

@@ -182,7 +182,7 @@ func newRepositoryHandler(w http.ResponseWriter, r *http.Request) {
 		password := r.Form["password"][0]
 		envVar := r.Form["envvar"][0] //e.g. "VAR=VALUE,OTHERVAR=VALUE"
 		id := rand.Int()
-		for getRepoName(id) != "" || id == 1 {
+		for getRepoName(id) != "" || id < 1000 { //reserved
 			id = rand.Int()
 		}
 		if !locationChooser {

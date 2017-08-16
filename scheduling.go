@@ -25,6 +25,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -170,4 +171,27 @@ func addJobCmd() { // fusenx add <name> <repoid> <2006-01-02T15:04> <scheduled> 
 		os.Exit(1)
 	}
 	os.Exit(0)
+}
+
+//editRepocmd creates or edits a Repo //id up to 1000 are reserved for this
+func editRepoCmd() { //fusenx repo <id> <name> <type> <location> <env> <password>
+	readFromConfig()
+	repoID, _ := strconv.Atoi(os.Args[2])
+	repoIndexToEdit := -1
+	for index, repo := range configData.Repos {
+		if repoID == repo.ID {
+			repoIndexToEdit = index
+			break
+		}
+	}
+	if repoIndexToEdit == -1 {
+		repoIndexToEdit = len(configData.Repos)
+		configData.Repos = append(configData.Repos, Repo{ID: repoID})
+	}
+	configData.Repos[repoIndexToEdit].Name = os.Args[3]
+	configData.Repos[repoIndexToEdit].Type = os.Args[4]
+	configData.Repos[repoIndexToEdit].Location = os.Args[5]
+	configData.Repos[repoIndexToEdit].EnvVariables = strings.Split(os.Args[6], ",")
+	configData.Repos[repoIndexToEdit].Password = os.Args[7]
+	writeToConfig()
 }
