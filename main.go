@@ -67,10 +67,6 @@ const (
 )
 
 func main() {
-	// // Testing for admin permission
-	// _, err := exec.Command("schtasks", "/create", "/tn", "Eitea FuseNX Test Task", "/tr", "cmd", "/sc", "weekly", "/sd", time.Now().Format("02/01/2006"), "/st", time.Now().Add(-5*time.Minute).Format("15:04"), "/ru", "SYSTEM", "/f").CombinedOutput()
-	// exec.Command("schtasks", "/delete", "/tn", "Eitea FuseNX Test Task", "/f").CombinedOutput()
-	// isAdmin = err == nil
 	isAdmin = checkForAdmin()
 	if isAdmin {
 		resticPath = os.Getenv("ProgramData") + "\\eitea\\restic.exe"
@@ -91,6 +87,8 @@ func main() {
 			addJobCmd()
 		} else if os.Args[1] == "repo" {
 			editRepoCmd() //creates or edits repo
+		} else if os.Args[1] == "deletejob" {
+			deleteJobCmd()
 		}
 		os.Exit(0)
 	}

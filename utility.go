@@ -91,6 +91,10 @@ func setEnvironmentVariables(envVarSlice ...string) {
 	readFromConfig()
 	for _, variable := range envVarSlice {
 		pair := strings.Split(variable, "=")
+		if len(pair) != 2 {
+			fmt.Println("Skipping", pair, "(wrong format)")
+			return
+		}
 		os.Setenv(pair[0], pair[1])
 	}
 }
