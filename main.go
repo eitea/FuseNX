@@ -89,6 +89,8 @@ func main() {
 			editRepoCmd() //creates or edits repo
 		} else if os.Args[1] == "deletejob" {
 			deleteJobCmd()
+		} else if os.Args[1] == "deleterepo" {
+			deleteRepoCmd()
 		}
 		os.Exit(0)
 	}

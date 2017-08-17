@@ -448,7 +448,6 @@ func deleteRepositoryHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		msg.setSuccess("Deleted Repository")
 	}
-
 }
 
 //indexHandler handles the start page

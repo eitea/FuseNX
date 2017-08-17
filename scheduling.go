@@ -18,6 +18,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/smtp"
 	"os"
@@ -214,4 +215,33 @@ func editRepoCmd() { //fusenx repo <id> <name> <type> <location> <env> <password
 func deleteJobCmd() { //fusenx deletejob <id>
 	jobID, _ := strconv.Atoi(os.Args[2])
 	deleteBackupJob(jobID)
+}
+
+func deleteRepoCmd() { //fusenx deleterepo <id>
+	repoID, _ := strconv.Atoi(os.Args[2])
+	readFromConfig()
+	//find the index of the job to delete
+	repoIndexToDelete := -1
+	for index, repo := range configData.Repos {
+		if repoID == repo.ID {
+			repoIndexToDelete = index
+			break
+		}
+	}
+	if repoIndexToDelete == -1 {
+		return
+	}
+	//delete all BackupJobs for this Repo
+	for _, job := range configData.BackupJobs {
+		if job.running {
+			fmt.Fprintln(os.Stderr, "A job is still running")
+			os.Exit(1)
+		}
+		if job.RepoID == repoID {
+			deleteBackupJob(job.ID)
+		}
+	}
+	//cut the slice
+	configData.Repos = append(configData.Repos[:repoIndexToDelete], configData.Repos[repoIndexToDelete+1:]...)
+	writeToConfig()
 }
