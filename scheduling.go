@@ -245,3 +245,15 @@ func deleteRepoCmd() { //fusenx deleterepo <id>
 	configData.Repos = append(configData.Repos[:repoIndexToDelete], configData.Repos[repoIndexToDelete+1:]...)
 	writeToConfig()
 }
+
+func logCmd() { //fusenx log <id>
+	jobID, _ := strconv.Atoi(os.Args[2])
+	job, _ := getBackupJob(jobID)
+	for _, log := range job.Logs {
+		success := "Successful"
+		if !log.Success {
+			success = "Not Successful"
+		}
+		fmt.Println(formatTime(log.Time) + "\t" + success + "\t" + log.Text)
+	}
+}

@@ -91,6 +91,8 @@ func main() {
 			deleteJobCmd()
 		} else if os.Args[1] == "deleterepo" {
 			deleteRepoCmd()
+		} else if os.Args[1] == "log" {
+			logCmd()
 		}
 		os.Exit(0)
 	}
