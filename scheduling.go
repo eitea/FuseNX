@@ -94,7 +94,7 @@ func performScheduledBackup() {
 //createScheduledTask creates a scheduled task with Task Scheduler
 func createScheduledTask(job BackupJob) error {
 	path := os.Args[0]
-	cmd := exec.Command("schtasks", "/create", "/tn", "Eitea FuseNX job "+strconv.Itoa(job.ID), "/tr", path+" job "+strconv.Itoa(job.ID), "/sc", "weekly", "/sd", job.Start.Format("02/01/2006"), "/st", job.Start.Format("15:04"), "/d", job.Weeks.formatDays(), "/mo", job.Weeks.formatInterval(), "/f")
+	cmd := exec.Command("schtasks", "/create", "/tn", "Eitea FuseNX job "+strconv.Itoa(job.ID), "/tr", "\""+path+"\" job "+strconv.Itoa(job.ID), "/sc", "weekly", "/sd", job.Start.Format("02/01/2006"), "/st", job.Start.Format("15:04"), "/d", job.Weeks.formatDays(), "/mo", job.Weeks.formatInterval(), "/f")
 	if isAdmin {
 		cmd.Args = append(cmd.Args, "/ru", "SYSTEM")
 	}
