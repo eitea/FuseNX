@@ -209,7 +209,7 @@ func newRepositoryHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		setEnvironmentVariables("RESTIC_PASSWORD=" + password)
 		initCmd := exec.Command(resticPath, "-r", location, "init")
-		if err := initCmd.Run(); err == nil || r.Form["import"] != nil { //only add repo if there is no error initializing it or if importing existing repository
+		if output, err := initCmd.CombinedOutput(); err == nil || r.Form["import"] != nil { //only add repo if there is no error initializing it or if importing existing repository
 			readFromConfig()
 			configData.Repos = append(configData.Repos, Repo{Name: name, Type: rType, Location: location, EnvVariables: envVarSlice, ID: id, Password: password})
 			writeToConfig()
@@ -219,7 +219,7 @@ func newRepositoryHandler(w http.ResponseWriter, r *http.Request) {
 				msg.setSuccess("Created Repository")
 			}
 		} else {
-			msg.setError(err.Error())
+			msg.setError(err.Error() + ": " + string(output))
 		}
 	}
 }
