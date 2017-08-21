@@ -35,7 +35,7 @@
                             <div class="btn-group" role="group">
                                 <button class="btn btn-primary" onclick="restoreLatest('{{.ID}}')">Restore latest Snapshot</button>
                                 <a class="btn btn-default" href="/filebrowser?repoid={{.ID}}">{{if ne .Location ``}}Manual Backup{{else}}Choose local location{{end}}</a>
-                                <a class="btn btn-default" href="/check?repoid={{.ID}}" title="Bearbeiten">Prüfen</a>
+                                <a class="btn btn-default" href="/check?repoid={{.ID}}" title="Check for Errors">Check</a>
                                 <a class="btn btn-default" href="/snapshot?id={{.ID}}" title="List Snapshots"><span class="glyphicon glyphicon-list"></span></a>                                
                                 <a class="btn btn-default" href="/editrepository?repoid={{.ID}}" title="Edit"><span class="glyphicon glyphicon-pencil"></span></a>
                                 <a title="Deletes Repository from FuseNX. To delete the Repository permanently, delete the repository folder" href="/deleterepository?repoid={{.ID}}"
