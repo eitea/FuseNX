@@ -25,3 +25,7 @@ var initial = Repo{
 	ID:           0, //ignored when id == 0
 	Password:     "password",
 }
+
+// func init() {
+// 	passwordCorrect = true
+// }
