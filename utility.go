@@ -26,6 +26,7 @@ import (
 	"html/template"
 	"io"
 	"io/ioutil"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -100,10 +101,10 @@ func setEnvironmentVariables(envVarSlice ...string) {
 }
 
 //openDefaultBrowser opens "localhost/gui" in the default browser
-func openDefaultBrowser() {
+func openDefaultBrowser(port string) {
 	switch runtime.GOOS {
 	case "windows":
-		err := exec.Command("rundll32", "url.dll,FileProtocolHandler", "http://localhost/gui").Run()
+		err := exec.Command("rundll32", "url.dll,FileProtocolHandler", "http://localhost:"+port+"/gui").Run()
 		if err != nil {
 			exec.Command("cmd", "/c", "start", "http://localhost/gui").Run()
 		}
@@ -416,4 +417,14 @@ func setBackupJobRunning(running bool, jobID int) {
 		return
 	}
 	configData.BackupJobs[jobIndex].running = running
+}
+
+//portFree test whether a give port is still free
+func portFree(port string) bool {
+	ln, err := net.Listen("tcp", ":"+port)
+	if err != nil {
+		return false
+	}
+	ln.Close()
+	return true
 }

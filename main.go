@@ -109,15 +109,11 @@ func serveGUI() {
 	default:
 		fmt.Println("Do not close this window until you are done with FuseNX.")
 	}
-	if configData.Settings.OpenBrowser {
-		go openDefaultBrowser()
-	} else {
-		switch configData.Settings.Language {
-		case "english":
-			fmt.Println("Visit http://localhost/gui to see the GUI (Go to settings to enable automatic browser start)")
-		case "german":
-			fmt.Println("Besuchen Sie http://localhost/gui um das GUI zu sehen (automatischer Start des Browsers in den Einstellungen aktivierbar)")
-		}
+	switch configData.Settings.Language {
+	case "english":
+		fmt.Println("Visit http://localhost/gui to see the GUI (Go to settings to enable automatic browser start)")
+	case "german":
+		fmt.Println("Besuchen Sie http://localhost/gui um das GUI zu sehen (automatischer Start des Browsers in den Einstellungen aktivierbar)")
 	}
 	parseAllTemplates()
 
@@ -161,13 +157,17 @@ func serveGUI() {
 	http.Handle("/staticfiles/", http.StripPrefix("/staticfiles/", http.FileServer(&assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir, AssetInfo: AssetInfo, Prefix: "data/staticfiles"})))
 
 	//Start Server
-	http.ListenAndServe(":80", nil)
-	for i := 81; i < 60000; i++ {
-		if configData.Settings.Language == "german" {
-			fmt.Print("\nPort ", i-1, " ist nicht verfügbar. Versuche Port ", i, " (besuche http://localhost:", i, "/gui um die Benutzeroberfläche zu sehen).\n")
+	for i := 8000; i < 60000; i++ {
+		strPort := strconv.Itoa(i)
+		if portFree(strPort) {
+			go openDefaultBrowser(strPort)
+			http.ListenAndServe(":"+strPort, nil)
 		} else {
-			fmt.Print("\nPort ", i-1, " not available. Trying Port ", i, " (visit http://localhost:", i, "/gui to view the GUI).\n")
+			if configData.Settings.Language == "german" {
+				fmt.Print("\nPort ", i, " ist nicht verfügbar. Versuche Port ", i+1, " (besuche http://localhost:", i, "/gui um die Benutzeroberfläche zu sehen).\n")
+			} else {
+				fmt.Print("\nPort ", i, " not available. Trying Port ", i+1, " (visit http://localhost:", i, "/gui to view the GUI).\n")
+			}
 		}
-		http.ListenAndServe(":"+strconv.Itoa(i), nil)
 	}
 }
