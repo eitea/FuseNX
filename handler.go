@@ -635,7 +635,7 @@ func newBackupJobHandler(w http.ResponseWriter, r *http.Request) {
 			id = rand.Int()
 		}
 		files := r.Form["files"]
-		files = modifyFileList(files)
+		files = fixFileList(files)
 		if r.Form["create"][0] == "Create" {
 			defer http.Redirect(w, r, "/backupjob", http.StatusSeeOther)
 		} else {
@@ -749,7 +749,7 @@ func editBackupJobHandler(w http.ResponseWriter, r *http.Request) {
 		if jobIndexToEdit == -1 {
 			return
 		}
-		files = modifyFileList(files)
+		files = fixFileList(files)
 		if r.Form["edit"][0] != "Save" {
 			defer http.Redirect(w, r, "/filebrowser?jobid="+strconv.Itoa(jobID), http.StatusSeeOther)
 		} else {
@@ -757,6 +757,7 @@ func editBackupJobHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		if r.Form["edit"][0] == "add" {
 			configData.BackupJobs[jobIndexToEdit].Files = append(configData.BackupJobs[jobIndexToEdit].Files, files[0])
+			configData.BackupJobs[jobIndexToEdit].Files = fixFileList(configData.BackupJobs[jobIndexToEdit].Files)
 			if configData.Settings.Language == "german" {
 				msg.setSuccess("Datei hinzugefügt")
 			} else {
@@ -777,6 +778,7 @@ func editBackupJobHandler(w http.ResponseWriter, r *http.Request) {
 					if len(configData.BackupJobs[jobIndexToEdit].Files) < 1 {
 						configData.BackupJobs[jobIndexToEdit].Files = append(configData.BackupJobs[jobIndexToEdit].Files, "")
 					}
+					configData.BackupJobs[jobIndexToEdit].Files = fixFileList(configData.BackupJobs[jobIndexToEdit].Files)
 					return
 				}
 			}

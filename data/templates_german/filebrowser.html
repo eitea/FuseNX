@@ -15,7 +15,7 @@
                 {{if .CurrentBackupJob.ID}}
                 <a class="btn btn-primary" href="/editbackupjob?jobid={{.CurrentBackupJob.ID}}">Zurück</a><br><br> 
                 {{else if .CurrentRepo.ID}}
-                <a class="btn btn-primary" href="/repository">Zurück</a><br><br> 
+                <a class="btn btn-primary" href="/repository">Zurück und Speichern</a><br><br> 
                 {{else}}
                 <a class="btn btn-primary" href="/gui">Start</a><br><br>              
                 {{end}}

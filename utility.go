@@ -382,8 +382,8 @@ func exitTimer() {
 	}
 }
 
-//modifyFileList deletes empty strings
-func modifyFileList(s []string) []string {
+//fixFileList deletes empty strings
+func fixFileList(s []string) []string {
 	var r []string
 	for _, str := range s {
 		if str != "" {
