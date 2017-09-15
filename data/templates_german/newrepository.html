@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>{{if not .Import}}Neues Archiv erstellen{{else}}Archiv Importieren{{end}}</title>
+    <title>{{if not .Import}}Neues Archiv erstellen{{else}}Archiv importieren{{end}}</title>
     {{template "imports"}}
 </head>
 
@@ -11,16 +11,16 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <h1 class="page-header">{{if not .Import}}Neues Archiv erstellen{{else}}Archiv Importieren{{end}}</h1>
+                <h1 class="page-header">{{if not .Import}}Neues Archiv erstellen{{else}}Archiv importieren{{end}}</h1>
                 <form action="/newrepository" class="form-horizontal" autocomplete="off">
                     {{if .Import}}<input type="hidden" value="true" name="import">{{end}}
                     <div class="form-group">
                         <label for="type" class="control-label col-sm-2">Typ</label>
                         <div class="col-sm-10">
                             <select class="form-control" id="type" name="type">
-                                <option value="local">Local</option>
+                                <option value="local">Lokal</option>
                                 <option value="sftp">SFTP</option>
-                                <option value="s3">S3 Amazon kompatibel</option>
+                                <option value="s3" selected>S3 Amazon kompatibel</option>
                             </select>
                         </div>
                     </div>
@@ -36,72 +36,89 @@
                             <input type="password" id="password" name="password" class="form-control" required>
                         </div>
                     </div>
-                    <div class="form-group" id="hide-envvar">
-                        <label for="envvar" class="control-label col-sm-2">Variablen</label>
-                        <div class="col-sm-10">
-                            <input type="text" id="envvar" class="form-control" name="envvar">
-                        </div>
-                    </div>
                     <div class="form-group">
                         <label for="location" class="control-label col-sm-2">Pfad</label>
                         <div class="col-sm-10">
                             <div class="input-group">
-                                <input type="text" id="location" name="location" class="form-control col-sm-8" placeholder="C:\backup" title="Frei lassen um im nächsten Schritt Dateien auszuwählen (nur bei Typ 'Lokal')">
-                                <span class="input-group-btn">
-                                <button class="btn btn-primary" type="submit" value="Create" name="create" title="Nur Lokal" id="browse">Durchsuchen</button>
+                                <input type="text" id="location" name="location" class="form-control" placeholder="C:\backup">
+                                <span class="input-group-btn" id="browsespan">
+                                <button class="btn btn-primary" type="submit" value="Create" name="create" id="browse">Durchsuchen</button>
                                 </span>
                             </div>
                         </div>
                     </div>
+
+                    <div id="s3values">
+                        <div class="form-group">
+                            <label for="access" class="control-label col-sm-2">S3 Schlüssel</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="access" id="access" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="secret" class="control-label col-sm-2">S3 Geheimer Schlüssel</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="secret" id="secret" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                   
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
                             <div class="btn-group" role="group">
-                                <button class="btn btn-primary" type="submit" value="Create" name="create" title="Erstellen"><span class="glyphicon glyphicon-ok"></span></button>
-                                <a class="btn btn-default" href="/repository" title="Abbrechen"><span class="glyphicon glyphicon-remove"></span></a>
+                                <button class="btn btn-primary" type="submit" value="Create" name="create"><span class="glyphicon glyphicon-ok"></span></button>
+                                <a class="btn btn-default" href="/repository"><span class="glyphicon glyphicon-remove"></span></a>
                             </div>
                         </div>
                     </div>
                 </form>
+                <div id="tip"></div>
                 <script>
-                    $("#hide-envvar").hide()
+                    $tip = $("#tip")
+                    $s3values = $("#s3values")
+                    $s3inputfileds = $("#access, #secret")
+                    $browse = $("#browsespan")
+                    $browseGroup = $browse.parent()
+                    $location =  $("#location")
+
+                    $browse.hide()
+                    $browseGroup.removeClass("input-group")
+                    $location.attr("required",true)
+                    $location.attr("placeholder","s3.amazonaws.com/freigabe-name oder http://localhost:9000/freigabe-name")
+
                     $("#type").change(function () {
-                        $this = $(this)
-                        $tip = $("#tip")
-                        $envgroup = $("#hide-envvar")
-                        $env = $("#envvar")
+                        $this = $(this)                        
                         if ($this.val() == "sftp") {
-                            $tip.html("<p>Trage <code>sftp:user@host:/path</code> als Pfad ein</p>")
-                            $envgroup.hide()
-                            $env.val("")
-                        } else if ($this.val() == "rest") {
-                            $tip.html("<p>Trage <code>rest:http://host:8000/</code>, <code>rest:https://host:8000/</code>, <code>rest:https://user:pass@host:8000/</code> oder <code>rest:https://user:pass@host:8000/path/</code> als Pfad ein</p>")
-                            $envgroup.hide()
-                            $env.val("")
+                            $tip.html("<p>Benutzen Sie <code>sftp:benutzer@host:/pfad</code> als Pfad für SFTP</p>")
+                            $s3values.hide()
+                            $s3inputfileds.removeAttr("required")
+                            $browse.show()
+                            $browseGroup.addClass("input-group")
+                            $location.removeAttr("required")
+                            $location.attr("placeholder","benutzer@host:/pfad")
                         } else if ($this.val() == "s3") {
-                            $tip.html("<p>Trage <code>s3:s3.amazonaws.com/bucket_name</code> als Pfad and <code>AWS_ACCESS_KEY_ID=MY_ACCESS_KEY,AWS_SECRET_ACCESS_KEY=MY_SECRET_ACCESS_KEY</code> als Variable ein</p>")
-                            $envgroup.show()
-                            $env.val("AWS_ACCESS_KEY_ID=MY_ACCESS_KEY,AWS_SECRET_ACCESS_KEY=MY_SECRET_ACCESS_KEY")
-                        } else if ($this.val() == "minio") {
-                            $tip.html("<p>Trage <code>s3:http://localhost:9000/restic</code> als Pfad und <code>AWS_ACCESS_KEY_ID=MY_ACCESS_KEY,AWS_SECRET_ACCESS_KEY=MY_SECRET_ACCESS_KEY</code> als Variable ein</p>")
-                            $envgroup.show()
-                            $env.val("AWS_ACCESS_KEY_ID=MY_ACCESS_KEY,AWS_SECRET_ACCESS_KEY=MY_SECRET_ACCESS_KEY")
-                        } else if ($this.val() == "swift") {
-                            $tip.html("<p>Trage <code>swift:container_name:/path</code> als Pfad und <code>ST_AUTH=MY_AUTH_URL,ST_USER=MY_USER_NAME,ST_KEY=MY_USER_PASSWORD</code> als Variable ein</p>")
-                            $envgroup.show()
-                            $env.val("ST_AUTH=MY_AUTH_URL,ST_USER=MY_USER_NAME,ST_KEY=MY_USER_PASSWORD")
-                        } else if ($this.val() == "b2") {
-                            $tip.html("<p>Trage <code>b2:bucketname:path/</code> als Pfad und <code>B2_ACCOUNT_ID=MY_ACCOUNT_ID,B2_ACCOUNT_KEY=MY_SECRET_ACCOUNT_KEY</code> als Variable ein</p>")
-                            $envgroup.show()
-                            $env.val("B2_ACCOUNT_ID=MY_ACCOUNT_ID,B2_ACCOUNT_KEY=MY_SECRET_ACCOUNT_KEY")
+                            $tip.html("<p>Benutzen Sie <code>s3:s3.amazonaws.com/freigabe-name</code> als Pfad für S3</p>")
+                            $s3values.show()
+                            $s3inputfileds.attr("required",true)
+                            $browse.hide()
+                            $browseGroup.removeClass("input-group")
+                            $location.attr("required",true)                  
+                            $location.attr("placeholder","s3.amazonaws.com/freigabe-name oder http://localhost:9000/freigabe-name")   
                         } else {
                             $tip.html("")
-                            $envgroup.hide()
-                            $env.val("")
+                            $s3values.hide()
+                            $s3inputfileds.removeAttr("required")
+                            $browse.show()
+                            $browseGroup.addClass("input-group")
+                            $location.removeAttr("required")           
+                            $location.attr("placeholder","C:\\pfad")
                         }
                     })
-
+                    
                     $("#browse").click(function(){
-                        $("#location").val("");
+                        if( $("#type").val() != "local" )
+                            return
+                       $location.val("");
                     })
                 </script>
             </div>
