@@ -173,14 +173,26 @@ func newRepositoryHandler(w http.ResponseWriter, r *http.Request) {
 		name := r.Form["name"][0]
 		rType := r.Form["type"][0] //local, sftp, rest, s3, ninio, swift, b2
 		var location string
+		var envVar string
 		locationChooser := false
 		if r.Form["location"] != nil && r.Form["location"][0] != "" {
-			location = r.Form["location"][0]
+			if rType == "sftp" {
+				location = "sftp:" + r.Form["location"][0]
+				envVar = ""
+			} else if rType == "s3" {
+				location = "s3:" + r.Form["location"][0]
+				accessKey := r.Form["access"][0]
+				secretKey := r.Form["secret"][0]
+				envVar = "AWS_ACCESS_KEY_ID=" + accessKey + ",AWS_SECRET_ACCESS_KEY=" + secretKey
+			} else {
+				location = r.Form["location"][0]
+				envVar = ""
+			}
 		} else {
 			locationChooser = true
 		}
 		password := r.Form["password"][0]
-		envVar := r.Form["envvar"][0] //e.g. "VAR=VALUE,OTHERVAR=VALUE"
+		//envVar := r.Form["envvar"][0] //e.g. "VAR=VALUE,OTHERVAR=VALUE"
 		id := rand.Int()
 		for getRepoName(id) != "" || id <= 1000 { //reserved
 			id = rand.Int()

@@ -20,7 +20,7 @@
                             <select class="form-control" id="type" name="type">
                                 <option value="local">Local</option>
                                 <option value="sftp">SFTP</option>
-                                <option value="s3">S3 Amazon like</option>
+                                <option value="s3" selected>S3 Amazon like</option>
                             </select>
                         </div>
                     </div>
@@ -36,23 +36,33 @@
                             <input type="password" id="password" name="password" class="form-control" required>
                         </div>
                     </div>
-                    <div class="form-group" id="hide-envvar">
-                        <label for="envvar" class="control-label col-sm-2">Environment Variables</label>
-                        <div class="col-sm-10">
-                            <input type="text" id="envvar" class="form-control" name="envvar">
-                        </div>
-                    </div>
                     <div class="form-group">
                         <label for="location" class="control-label col-sm-2">Location</label>
                         <div class="col-sm-10">
                             <div class="input-group">
                                 <input type="text" id="location" name="location" class="form-control" placeholder="C:\backup" title="Leave blank to choose files (local only)">
-                                <span class="input-group-btn">
+                                <span class="input-group-btn" id="browsespan">
                                 <button class="btn btn-primary" type="submit" value="Create" name="create" title="local only" id="browse">Browse</button>
                                 </span>
                             </div>
                         </div>
                     </div>
+
+                    <div id="s3values">
+                        <div class="form-group">
+                            <label for="access" class="control-label col-sm-2">S3 Access Key</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="access" id="access" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="secret" class="control-label col-sm-2">S3 Secret Access Key</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="secret" id="secret" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                   
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
                             <div class="btn-group" role="group">
@@ -62,46 +72,53 @@
                         </div>
                     </div>
                 </form>
+                <div id="tip"></div>
                 <script>
-                    $("#hide-envvar").hide()
+                    $tip = $("#tip")
+                    $s3values = $("#s3values")
+                    $s3inputfileds = $("#access, #secret")
+                    $browse = $("#browsespan")
+                    $browseGroup = $browse.parent()
+                    $location =  $("#location")
+
+                    $browse.hide()
+                    $browseGroup.removeClass("input-group")
+                    $location.attr("required",true)
+                    $location.attr("placeholder","s3.amazonaws.com/bucket-name or http://localhost:9000/bucket-name")
+
                     $("#type").change(function () {
-                        $this = $(this)
-                        $tip = $("#tip")
-                        $envgroup = $("#hide-envvar")
-                        $env = $("#envvar")
+                        $this = $(this)                        
                         if ($this.val() == "sftp") {
                             $tip.html("<p>Use <code>sftp:user@host:/path</code> as location for SFTP</p>")
-                            $envgroup.hide()
-                            $env.val("")
-                        } else if ($this.val() == "rest") {
-                            $tip.html("<p>Use <code>rest:http://host:8000/</code>, <code>rest:https://host:8000/</code>, <code>rest:https://user:pass@host:8000/</code> or <code>rest:https://user:pass@host:8000/path/</code> as location for REST</p>")
-                            $envgroup.hide()
-                            $env.val("")
+                            $s3values.hide()
+                            $s3inputfileds.removeAttr("required")
+                            $browse.show()
+                            $browseGroup.addClass("input-group")
+                            $location.removeAttr("required")
+                            $location.attr("placeholder","user@host:/path")
                         } else if ($this.val() == "s3") {
                             $tip.html("<p>Use <code>s3:s3.amazonaws.com/bucket_name</code> as location for S3 and add <code>AWS_ACCESS_KEY_ID=MY_ACCESS_KEY,AWS_SECRET_ACCESS_KEY=MY_SECRET_ACCESS_KEY</code> to variables</p>")
-                            $envgroup.show()
-                            $env.val("AWS_ACCESS_KEY_ID=MY_ACCESS_KEY,AWS_SECRET_ACCESS_KEY=MY_SECRET_ACCESS_KEY")
-                        } else if ($this.val() == "minio") {
-                            $tip.html("<p>Use <code>s3:http://localhost:9000/restic</code> as location for Minio and add <code>AWS_ACCESS_KEY_ID=MY_ACCESS_KEY,AWS_SECRET_ACCESS_KEY=MY_SECRET_ACCESS_KEY</code> to variables</p>")
-                            $envgroup.show()
-                            $env.val("AWS_ACCESS_KEY_ID=MY_ACCESS_KEY,AWS_SECRET_ACCESS_KEY=MY_SECRET_ACCESS_KEY")
-                        } else if ($this.val() == "swift") {
-                            $tip.html("<p>Use <code>swift:container_name:/path</code> as location for Swift and add <code>ST_AUTH=MY_AUTH_URL,ST_USER=MY_USER_NAME,ST_KEY=MY_USER_PASSWORD</code> to variables</p>")
-                            $envgroup.show()
-                            $env.val("ST_AUTH=MY_AUTH_URL,ST_USER=MY_USER_NAME,ST_KEY=MY_USER_PASSWORD")
-                        } else if ($this.val() == "b2") {
-                            $tip.html("<p>Use <code>b2:bucketname:path/</code> as location for B2 and add <code>B2_ACCOUNT_ID=MY_ACCOUNT_ID,B2_ACCOUNT_KEY=MY_SECRET_ACCOUNT_KEY</code> to variables</p>")
-                            $envgroup.show()
-                            $env.val("B2_ACCOUNT_ID=MY_ACCOUNT_ID,B2_ACCOUNT_KEY=MY_SECRET_ACCOUNT_KEY")
+                            $s3values.show()
+                            $s3inputfileds.attr("required",true)
+                            $browse.hide()
+                            $browseGroup.removeClass("input-group")
+                            $location.attr("required",true)                  
+                            $location.attr("placeholder","s3.amazonaws.com/bucket-name or http://localhost:9000/bucket-name")   
                         } else {
                             $tip.html("")
-                            $envgroup.hide()
-                            $env.val("")
+                            $s3values.hide()
+                            $s3inputfileds.removeAttr("required")
+                            $browse.show()
+                            $browseGroup.addClass("input-group")
+                            $location.removeAttr("required")           
+                            $location.attr("placeholder","C:\\path")                 
                         }
                     })
                     
                     $("#browse").click(function(){
-                        $("#location").val("");
+                        if( $("#type").val() != "local" )
+                            return
+                       $location.val("");
                     })
                 </script>
             </div>
