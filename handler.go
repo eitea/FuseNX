@@ -217,6 +217,11 @@ func newRepositoryHandler(w http.ResponseWriter, r *http.Request) {
 			readFromConfig()
 			configData.Repos = append(configData.Repos, Repo{Name: name, Type: rType, Location: location, EnvVariables: envVarSlice, ID: id, Password: password})
 			writeToConfig()
+			if configData.Settings.Language == "german" {
+				msg.set("Bitte Pfad auswählen")
+			} else {
+				msg.set("Please choose location")
+			}
 			return
 		}
 		setEnvironmentVariables("RESTIC_PASSWORD=" + password)
