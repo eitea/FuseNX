@@ -89,7 +89,7 @@
                     $("#type").change(function () {
                         $this = $(this)                        
                         if ($this.val() == "sftp") {
-                            $tip.html("<p>Use <code>sftp:user@host:/path</code> as location for SFTP</p>")
+                            $tip.html("<p>Use <code>user@host:/path</code> as location for SFTP</p>")
                             $s3values.hide()
                             $s3inputfileds.removeAttr("required")
                             $browse.show()
@@ -97,7 +97,7 @@
                             $location.removeAttr("required")
                             $location.attr("placeholder","user@host:/path")
                         } else if ($this.val() == "s3") {
-                            $tip.html("<p>Use <code>s3:s3.amazonaws.com/bucket_name</code> as location for S3 and add <code>AWS_ACCESS_KEY_ID=MY_ACCESS_KEY,AWS_SECRET_ACCESS_KEY=MY_SECRET_ACCESS_KEY</code> to variables</p>")
+                            $tip.html("<p>Use <code>s3.amazonaws.com/bucket_name</code> as location for S3 and add <code>AWS_ACCESS_KEY_ID=MY_ACCESS_KEY,AWS_SECRET_ACCESS_KEY=MY_SECRET_ACCESS_KEY</code> to variables</p>")
                             $s3values.show()
                             $s3inputfileds.attr("required",true)
                             $browse.hide()

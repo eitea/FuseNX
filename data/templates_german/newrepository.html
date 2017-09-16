@@ -89,7 +89,7 @@
                     $("#type").change(function () {
                         $this = $(this)                        
                         if ($this.val() == "sftp") {
-                            $tip.html("<p>Benutzen Sie <code>sftp:benutzer@host:/pfad</code> als Pfad für SFTP</p>")
+                            $tip.html("<p>Benutzen Sie <code>benutzer@host:/pfad</code> als Pfad für SFTP</p>")
                             $s3values.hide()
                             $s3inputfileds.removeAttr("required")
                             $browse.show()
@@ -97,7 +97,7 @@
                             $location.removeAttr("required")
                             $location.attr("placeholder","benutzer@host:/pfad")
                         } else if ($this.val() == "s3") {
-                            $tip.html("<p>Benutzen Sie <code>s3:s3.amazonaws.com/freigabe-name</code> als Pfad für S3</p>")
+                            $tip.html("<p>Benutzen Sie <code>s3.amazonaws.com/freigabe-name</code> als Pfad für S3</p>")
                             $s3values.show()
                             $s3inputfileds.attr("required",true)
                             $browse.hide()
