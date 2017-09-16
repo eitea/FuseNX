@@ -61,7 +61,7 @@ var (
 
 const (
 	defaultPassword      string  = "G6DFxBFm1YUEHgqBxdxjymMZuZykxgT5"
-	version              float64 = 0.150917
+	version              float64 = 0.170916 //yymmdd
 	versionCheckURL      string  = "http://localhost:81/isnewestversion.php"
 	newerVersionDownload string  = "http://localhost:81"
 )

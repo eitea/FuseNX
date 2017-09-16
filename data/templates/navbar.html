@@ -58,7 +58,10 @@
     })
     //{{end}}
     setInterval(function () {
-        $.ajax({ url: "/alive" })
+        $.ajax({ 
+            url: "/alive" ,
+            dataType: 'text'
+        })
     }, 1000)
 
 </script>
